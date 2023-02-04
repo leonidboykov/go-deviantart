@@ -27,9 +27,17 @@ func ClientCredentials(clientID, clientSecret string) Authenticator {
 	}
 }
 
+const (
+	BasicScope   = "basic"
+	BrowseScope  = "browse"
+	PublishScope = "publish"
+	StashScope   = "stash"
+	UserScope    = "user"
+)
+
 // AuthorizationCode grant is the most common OAuth2 grant type and gives access
 // to aspects of a users account. Use this method if you need to upload images.
-func AuthorizationCode(clientID, clientSecret, callbackURL string) Authenticator {
+func AuthorizationCode(clientID, clientSecret string, scopes []string, callbackURL string) Authenticator {
 	conf := &oauth2.Config{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
@@ -38,7 +46,7 @@ func AuthorizationCode(clientID, clientSecret, callbackURL string) Authenticator
 			TokenURL: "https://www.deviantart.com/oauth2/token",
 		},
 		RedirectURL: callbackURL,
-		Scopes:      []string{"basic", "stash", "publish"},
+		Scopes:      scopes,
 	}
 	return func(s *sling.Sling) error {
 		url := conf.AuthCodeURL("state")

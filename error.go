@@ -1,6 +1,9 @@
 package deviantart
 
+import "fmt"
+
 type Error struct {
+	StatusResponse
 	Text        string            `json:"error"`
 	Code        int               `json:"code"`
 	Description string            `json:"error_description"`
@@ -9,7 +12,7 @@ type Error struct {
 
 func (e Error) Error() string {
 	// TODO: Append details.
-	return e.Description
+	return fmt.Sprintf("%s: %s", e.Text, e.Description)
 }
 
 func relevantError(httpError error, apiError Error) error {

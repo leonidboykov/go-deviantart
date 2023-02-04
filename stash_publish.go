@@ -70,12 +70,7 @@ type StashPublishParams struct {
 	SharingOptions string `url:"sharing,omitempty"`
 
 	// License options.
-	LicenseOptions struct {
-		CreativeCommons bool `url:"creative_commons,omitempty"`
-		Commercial      bool `url:"commercial,omitempty"`
-		// Valid values: yes, no, share
-		Modify string `url:"modify,omitempty"`
-	} `url:"license_options,omitempty"`
+	LicenseOptions LicenseOptions `url:"license_options,omitempty"`
 
 	// UUIDs of gallery folders to publish this submission to.
 	GalleryIDs []string `url:"galleryids,omitempty"`

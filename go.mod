@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/dghubble/sling v1.4.1
+	github.com/google/uuid v1.3.0
 	golang.org/x/oauth2 v0.4.0
 )
 

@@ -8,6 +8,21 @@ import (
 	"github.com/dghubble/sling"
 )
 
+// TODO: STASH
+// 	/{stackid}
+// 	/{stackid}/contents
+// 	/delete
+// 	/delta
+// 	/item/{itemid}
+// 	/move/{stackid}
+// 	/position/{stackid}
+// 	/publish
+// 	/publish/categorytree
+// 	/publish/userdata
+// 	/space
+// 	/submit
+// 	/update/{stackid}
+
 type StashObject struct {
 	Src          string `json:"src"`
 	Height       int    `json:"height"`

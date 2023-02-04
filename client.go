@@ -6,9 +6,17 @@ import (
 
 const deviantArtURL = "https://www.deviantart.com/api/v1/oauth2/"
 
+type StatusResponse struct {
+	Status string `json:"status"`
+}
+
 // Client provices access to DeviantArt API endpoint.
 type Client struct {
-	Stash *stashService
+	base      *sling.Sling
+	Browse    *browseService
+	Stash     *stashService
+	Deviation *deviationService
+	User      *userService
 }
 
 // TODO: Add http.Client to args.
@@ -19,7 +27,11 @@ func NewClient(auth Authenticator) (*Client, error) {
 	}
 
 	c := Client{
-		Stash: newStashService(sling.New()),
+		base:      sling,
+		Browse:    newBrowseService(sling.New()),
+		Deviation: newDeviationService(sling.New()),
+		Stash:     newStashService(sling.New()),
+		User:      newUserService(sling.New()),
 	}
 	return &c, nil
 }
