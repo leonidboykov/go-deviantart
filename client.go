@@ -16,6 +16,7 @@ type Client struct {
 	Browse      *browseService
 	Collections *collectionsService
 	Deviation   *deviationService
+	Gallery     *galleryService
 	Stash       *stashService
 	User        *userService
 }
@@ -32,6 +33,7 @@ func NewClient(auth Authenticator) (*Client, error) {
 		Browse:      newBrowseService(sling.New()),
 		Collections: newCollectionsService(sling.New()),
 		Deviation:   newDeviationService(sling.New()),
+		Gallery:     newGalleryService(sling.New()),
 		Stash:       newStashService(sling.New()),
 		User:        newUserService(sling.New()),
 	}

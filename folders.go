@@ -43,7 +43,7 @@ type FoldersParams struct {
 }
 
 // Folders fetches collection folders.
-func (s *foldersService) Folders(params *FolderParams) (FolderContent, error) {
+func (s *foldersService) Folders(params *CollectionsFolderParams) (FolderContent, error) {
 	var (
 		success FolderContent
 		failure Error

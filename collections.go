@@ -16,11 +16,11 @@ func newCollectionsService(sling *sling.Sling) *collectionsService {
 	base := sling.Path("collections/")
 	return &collectionsService{
 		sling:   base,
-		Folders: newFoldersService(sling.New()),
+		Folders: newFoldersService(base.New()),
 	}
 }
 
-type FolderParams struct {
+type CollectionsFolderParams struct {
 	// The user who owns the folder, defaults to current user.
 	Username string `url:"username,omitempty"`
 
@@ -42,7 +42,7 @@ type FolderContent struct {
 }
 
 // Folder fetches collection folder contents.
-func (s *collectionsService) Folder(folderID uuid.UUID, params *FolderParams) (FolderContent, error) {
+func (s *collectionsService) Folder(folderID uuid.UUID, params *CollectionsFolderParams) (FolderContent, error) {
 	var (
 		success FolderContent
 		failure Error
@@ -55,7 +55,7 @@ func (s *collectionsService) Folder(folderID uuid.UUID, params *FolderParams) (F
 }
 
 // All fetches all deviations in user's collection.
-func (s *collectionsService) All(params *FolderParams) (FolderContent, error) {
+func (s *collectionsService) All(params *CollectionsFolderParams) (FolderContent, error) {
 	var (
 		success FolderContent
 		failure Error
