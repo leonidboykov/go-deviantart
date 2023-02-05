@@ -28,11 +28,12 @@ func ClientCredentials(clientID, clientSecret string) Authenticator {
 }
 
 const (
-	BasicScope   = "basic"
-	BrowseScope  = "browse"
-	PublishScope = "publish"
-	StashScope   = "stash"
-	UserScope    = "user"
+	BasicScope      = "basic"
+	BrowseScope     = "browse"
+	CollectionScope = "collection"
+	PublishScope    = "publish"
+	StashScope      = "stash"
+	UserScope       = "user"
 )
 
 // AuthorizationCode grant is the most common OAuth2 grant type and gives access

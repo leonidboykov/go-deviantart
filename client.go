@@ -12,11 +12,12 @@ type StatusResponse struct {
 
 // Client provices access to DeviantArt API endpoint.
 type Client struct {
-	base      *sling.Sling
-	Browse    *browseService
-	Stash     *stashService
-	Deviation *deviationService
-	User      *userService
+	base        *sling.Sling
+	Browse      *browseService
+	Collections *collectionsService
+	Deviation   *deviationService
+	Stash       *stashService
+	User        *userService
 }
 
 // TODO: Add http.Client to args.
@@ -27,11 +28,12 @@ func NewClient(auth Authenticator) (*Client, error) {
 	}
 
 	c := Client{
-		base:      sling,
-		Browse:    newBrowseService(sling.New()),
-		Deviation: newDeviationService(sling.New()),
-		Stash:     newStashService(sling.New()),
-		User:      newUserService(sling.New()),
+		base:        sling,
+		Browse:      newBrowseService(sling.New()),
+		Collections: newCollectionsService(sling.New()),
+		Deviation:   newDeviationService(sling.New()),
+		Stash:       newStashService(sling.New()),
+		User:        newUserService(sling.New()),
 	}
 	return &c, nil
 }

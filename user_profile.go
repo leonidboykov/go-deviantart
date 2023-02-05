@@ -40,11 +40,8 @@ type Profile struct {
 		ProfilePageViews uint32 `json:"profile_pageviews"`
 		ProfileComments  uint32 `json:"profile_comments"`
 	} `json:"stats"`
-	Collections []struct {
-		FolderID uuid.UUID `json:"folderid"`
-		Name     string    `json:"name"`
-	} `json:"collections,omitempty"`
-	Galleries []struct {
+	Collections []Folder `json:"collections,omitempty"`
+	Galleries   []struct {
 		FolderID uuid.UUID `json:"folderid"`
 		Parent   uuid.UUID `json:"parent,omitempty"`
 		Name     string    `json:"name"`
@@ -55,8 +52,10 @@ type Profile struct {
 type ProfileParams struct {
 	// Include collection folder info.
 	IncludeCollections bool `url:"ext_collections,omitempty"`
+
 	// Include gallery folder info.
 	IncludeGalleries bool `url:"ext_galleries,omitempty"`
+
 	// Session data is not always needed for this endpoint.
 	WithSession bool `url:"with_session,omitempty"`
 }
