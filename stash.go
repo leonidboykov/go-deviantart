@@ -9,11 +9,7 @@ import (
 )
 
 // TODO: STASH
-// 	/{stackid}
-// 	/{stackid}/contents
-// 	/delete
 // 	/delta
-// 	/item/{itemid}
 // 	/move/{stackid}
 // 	/position/{stackid}
 // 	/publish
@@ -72,7 +68,7 @@ type StashMetadata struct {
 }
 
 // Stack fetches a stash stack's metadata.
-func (s *stashService) StackMetadata(stackID int64) (StashMetadata, error) {
+func (s *stashService) Stack(stackID int64) (StashMetadata, error) {
 	var (
 		success StashMetadata
 		failure Error

@@ -7,14 +7,6 @@ import (
 	"github.com/dghubble/sling"
 )
 
-// TODO: BROWSE
-// 	/tags
-// 	/tags/search
-// 	/topic
-// 	/topics
-// 	/toptopics
-// 	/user/journals
-
 type browseService struct {
 	sling *sling.Sling
 }
@@ -25,47 +17,33 @@ func newBrowseService(sling *sling.Sling) *browseService {
 	}
 }
 
-type DeviationsResponse struct {
-	HasMore        bool        `json:"has_more"`
-	NextOffset     uint32      `json:"next_offset,omitempty"`
-	EstimatedTotal uint32      `json:"estimated_total,omitempty"`
-	Results        []Deviation `json:"results"`
-	Session        *Session    `json:"session,omitempty"`
-}
-
 type DailyDeviationsParams struct {
 	Date        time.Time `url:"date,omitempty" layout:"2006-01-02"`
-	WithSession bool      `url:"with_session,omitempty"`
+	WithSession bool      `url:"with_session,omitempty"` // TODO: Move WithSession to parameters.
 }
 
 // DailyDeviations fetches daily deviations.
-func (s *browseService) DailyDeviations(params *DailyDeviationsParams) (DeviationsResponse, error) {
+func (s *browseService) DailyDeviations(params *DailyDeviationsParams) (OffsetResponse[Deviation], error) {
 	var (
-		success DeviationsResponse
+		success OffsetResponse[Deviation]
 		failure Error
 	)
 	_, err := s.sling.New().Get("dailydeviations").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return DeviationsResponse{}, fmt.Errorf("unable to fetch daily deviations: %w", err)
+		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch daily deviations: %w", err)
 	}
 	return success, nil
 }
 
-type DeviantsYouWatchParams struct {
-	Limit       uint32 `url:"limit,omitempty"`
-	Offset      uint32 `url:"offset,omitempty"`
-	WithSession bool   `url:"with_session,omitempty"`
-}
-
 // DeviantsYouWatch fetches deviations of deviants you watch.
-func (s *browseService) DeviantsYouWatch(params *DeviantsYouWatchParams) (DeviationsResponse, error) {
+func (s *browseService) DeviantsYouWatch(page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
-		success DeviationsResponse
+		success OffsetResponse[Deviation]
 		failure Error
 	)
-	_, err := s.sling.New().Get("deviantsyouwatch").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("deviantsyouwatch").QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return DeviationsResponse{}, fmt.Errorf("unable to fetch deviants for you: %w", err)
+		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch deviants for you: %w", err)
 	}
 	return success, nil
 }
@@ -75,67 +53,194 @@ func (s *browseService) DeviantsYouWatch(params *DeviantsYouWatchParams) (Deviat
 type SearchParams struct {
 	// Search query term.
 	Query string `url:"q,omitempty"`
-
-	// The pagination offset.
-	Offset int `url:"offset,omitempty"`
-
-	// The pagination offset.
-	Limit int `url:"offset,omitempty"`
-
-	WithSession bool `url:"with_session,omitempty"`
 }
 
 // Newest fetches newest deviations.
-func (s *browseService) Newest(params *SearchParams) (DeviationsResponse, error) {
+func (s *browseService) Newest(params *SearchParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
-		success DeviationsResponse
+		success OffsetResponse[Deviation]
 		failure Error
 	)
-	_, err := s.sling.New().Get("newest").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("newest").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return DeviationsResponse{}, fmt.Errorf("unable to fetch newest deviations: %w", err)
+		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch newest deviations: %w", err)
 	}
-	return DeviationsResponse{}, nil
+	return success, nil
+}
+
+type PopularParams struct {
+	// Search query term.
+	Query string `url:"q,omitempty"`
+
+	// The timerange.
+	//
+	// TODO: Valid values are: values(now, 1week, 1month, alltime).
+	TimeRange string `url:"timerange,omitempty"`
 }
 
 // Popular fetches popular deviations.
-func (s *browseService) Popular(params *SearchParams) (DeviationsResponse, error) {
+func (s *browseService) Popular(params *PopularParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
-		success DeviationsResponse
+		success OffsetResponse[Deviation]
 		failure Error
 	)
-	_, err := s.sling.New().Get("popular").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("popular").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return DeviationsResponse{}, fmt.Errorf("unable to fetch popular deviations: %w", err)
+		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch popular deviations: %w", err)
 	}
 	return success, nil
 }
 
 // TODO: what is it?
-func (s *browseService) PostsDeviantsYouWatch(params *SearchParams) (DeviationsResponse, error) {
+func (s *browseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
-		success DeviationsResponse
+		success OffsetResponse[Deviation]
 		failure Error
 	)
-	_, err := s.sling.New().Get("posts/deviantsyouwatch").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("posts/deviantsyouwatch").QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return DeviationsResponse{}, fmt.Errorf("unable to fetch deviants for you: %w", err)
+		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch deviants for you: %w", err)
 	}
 	return success, nil
 }
 
 // Recommended fetches recommended deviations.
-func (s *browseService) Recommended(params *SearchParams) (DeviationsResponse, error) {
+func (s *browseService) Recommended(params *SearchParams) (OffsetResponse[Deviation], error) {
 	var (
-		success DeviationsResponse
+		success OffsetResponse[Deviation]
 		failure Error
 	)
 	_, err := s.sling.New().Get("recommended").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return DeviationsResponse{}, fmt.Errorf("unable to fetch recommended deviations: %w", err)
+		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch recommended deviations: %w", err)
 	}
 	return success, nil
 }
 
+type TagsParams struct {
+	// The tag to browse.
+	Tag string `url:"tag"`
+}
+
 // Tags fetches a tag.
-// func (s *browseService) Tags()
+//
+// NOTE: This endpoing supports cursor- and offset-base pagination.
+// But for simplicity, I'll stick to cursor params for now.
+func (s *browseService) Tags(params *TagsParams, page *CursorParams) (CursorResponse[Deviation], error) {
+	var (
+		success CursorResponse[Deviation]
+		failure Error
+	)
+	_, err := s.sling.New().Get("tags").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return CursorResponse[Deviation]{}, fmt.Errorf("unable to fetch tags: %w", err)
+	}
+	return success, nil
+}
+
+type TagsSearchResponse struct {
+	Results []struct {
+		Name string `json:"tag_name"`
+	} `json:"results"`
+}
+
+type TagsSearchParams struct {
+	TagName     string `url:"tag_name"`
+	WithSession bool   `url:"with_session,omitempty"`
+}
+
+// TagsSearch autocompletes tags.
+func (s *browseService) TagsSearch(params *TagsSearchParams) ([]string, error) {
+	var (
+		success TagsSearchResponse
+		failure Error
+	)
+	_, err := s.sling.New().Get("tags/search").QueryStruct(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return nil, fmt.Errorf("unable to search tags: %w", err)
+	}
+
+	tags := make([]string, 0, len(success.Results))
+	for _, tag := range success.Results {
+		tags = append(tags, tag.Name)
+	}
+	return tags, nil
+}
+
+type TopicParams struct {
+	// Topic name.
+	Topic string `url:"topic"`
+}
+
+// Topic fetches topic deviations.
+func (s *browseService) Topic(params *TopicParams, page *CursorParams) (CursorResponse[Deviation], error) {
+	var (
+		success CursorResponse[Deviation]
+		failure Error
+	)
+	_, err := s.sling.New().Get("topic").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return CursorResponse[Deviation]{}, fmt.Errorf("unable to fetch topic: %w", err)
+	}
+	return success, nil
+}
+
+type Topic struct {
+	Name              string      `json:"name"`
+	CanonicalName     string      `json:"canonical_name"`
+	ExampleDeviations []Deviation `json:"example_deviations,omitempty"`
+	Deviations        []Deviation `json:"deviations,omitempty"`
+}
+
+// Topics fetches topics and deviations from each topic.
+func (s *browseService) Topics(page *CursorParams) (CursorResponse[Topic], error) {
+	var (
+		success CursorResponse[Topic]
+		failure Error
+	)
+	_, err := s.sling.New().Get("topics").QueryStruct(page).Receive(success, failure)
+	if err := relevantError(err, failure); err != nil {
+		return CursorResponse[Topic]{}, fmt.Errorf("unable to fetch topics: %w", err)
+	}
+	return success, nil
+}
+
+type TopTopic struct {
+	Name              string      `json:"name"`
+	CanonicalName     string      `json:"canonical_name"`
+	ExampleDeviations []Deviation `json:"example_deviations,omitempty"`
+}
+
+// Topics fetches top topics with example deviation for each one.
+func (s *browseService) TopTopics(page *CursorParams) (CursorResponse[TopTopic], error) {
+	var (
+		success CursorResponse[TopTopic]
+		failure Error
+	)
+	_, err := s.sling.New().Get("toptopics").QueryStruct(page).Receive(success, failure)
+	if err := relevantError(err, failure); err != nil {
+		return CursorResponse[TopTopic]{}, fmt.Errorf("unable to fetch topics: %w", err)
+	}
+	return success, nil
+}
+
+type UserJournalsParams struct {
+	// The username of the user to fetch journals for.
+	Username string `url:"username"`
+
+	// Fetch only featured or not.
+	Featured bool `url:"featured"`
+}
+
+// UserJournals browses journals of a user.
+func (s *browseService) UserJournals(params *UserJournalsParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
+	var (
+		success OffsetResponse[Deviation]
+		failure Error
+	)
+	_, err := s.sling.New().Get("user/journals").QueryStruct(params).QueryStruct(page).Receive(success, failure)
+	if err := relevantError(err, failure); err != nil {
+		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to browse user journals: %w", err)
+	}
+	return success, nil
+}
