@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/dghubble/sling"
+	"github.com/google/uuid"
 )
 
 type browseService struct {
@@ -48,7 +49,31 @@ func (s *browseService) DeviantsYouWatch(page *OffsetParams) (OffsetResponse[Dev
 	return success, nil
 }
 
-// TODO: MoreLikeThis/Preview is actual?
+type MoreLikeThisPreviewResponse struct {
+	Seed                 uuid.UUID   `json:"seed"`
+	Author               User        `json:"user"`
+	MoreFromArtist       []Deviation `json:"more_from_artist"`
+	MoreFromDA           []Deviation `json:"more_from_da"`
+	SuggestedCollections []struct {
+		Collection Folder      `json:"collection"` //Gallection
+		Deviations []Deviation `json:"deviations"`
+	} `json:"suggested_collections,omitempty"`
+}
+
+func (s *browseService) MoreLikeThisPreview(seed uuid.UUID) (MoreLikeThisPreviewResponse, error) {
+	type seedParams struct {
+		Seed uuid.UUID `url:"seed"`
+	}
+	var (
+		success MoreLikeThisPreviewResponse
+		failure Error
+	)
+	_, err := s.sling.New().Get("morelikethis/preview").QueryStruct(&seedParams{Seed: seed}).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return MoreLikeThisPreviewResponse{}, fmt.Errorf("unable to fetch more like this: %w", err)
+	}
+	return success, nil
+}
 
 type SearchParams struct {
 	// Search query term.

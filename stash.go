@@ -1,7 +1,6 @@
 package deviantart
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 
@@ -125,6 +124,39 @@ func (s *stashService) Delete(itemID int64) (bool, error) {
 	return success["success"].(bool), nil
 }
 
+type StashDeltaResponse struct {
+	Cursor     string `json:"cursor"`
+	HasMore    bool   `json:"has_more"`
+	NextOffset int    `json:"next_offset"`
+	Reset      bool   `json:"reset"`
+	Entries    []struct {
+		ItemID   int           `json:"itemid,omitempty"`
+		StackID  int           `json:"stackid,omitempty"`
+		Metadata StashMetadata `json:"stash_metadata"`
+		Position int           `json:"position,omitempty"`
+	} `json:"entries,omitempty"`
+}
+
+type StashDeltaParams struct {
+	// The cursor hash provided to your app in the last delta call.
+	Cursor string `url:"cursor,omitempty"`
+
+	// The pagination offset
+	Offset int `url:"offset,omitempty"`
+
+	// The pagination limit
+	Limit int `url:"limit,omitempty"`
+
+	// Include extended submission information
+	IncludeSubmission bool `url:"ext_submission"`
+
+	// Include camera EXIF information
+	IncludeCamera bool `url:"ext_camera"`
+
+	// Include extended statistics
+	IncludeStats bool `url:"ext_stats"`
+}
+
 // Delta retrieves contents of Sta.sh for a user.
 //
 // This endpoint is used to retrieve all data available in user's Sta.sh. The
@@ -143,9 +175,16 @@ func (s *stashService) Delete(itemID int64) (bool, error) {
 // can send you only new and modified stacks and items.
 //
 // Requires Authorization Code grant.
-func (s *stashService) Delta() (any, error) {
-	// TODO: Checkout this endpoint.
-	return nil, errors.New("not implemented yet")
+func (s *stashService) Delta(params *StashDeltaParams) (StashDeltaResponse, error) {
+	var (
+		success StashDeltaResponse
+		failure Error
+	)
+	_, err := s.sling.New().Get("delta").QueryStruct(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return StashDeltaResponse{}, fmt.Errorf("unable to fetch felta: %w", err)
+	}
+	return success, nil
 }
 
 type StashMoveResponse struct {

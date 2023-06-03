@@ -10,6 +10,7 @@ import (
 type Folder struct {
 	FolderID uuid.UUID `json:"folderid"`
 	Name     string    `json:"name"`
+	Owner    *User     `json:"owner,omitempty"`
 }
 
 type foldersService struct {
