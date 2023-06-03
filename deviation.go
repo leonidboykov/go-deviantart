@@ -1,7 +1,6 @@
 package deviantart
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/dghubble/sling"
@@ -16,6 +15,11 @@ func newDeviationService(sling *sling.Sling) *deviationService {
 	return &deviationService{
 		sling: sling.Path("deviation/"),
 	}
+}
+
+// deviationIDParam is a wrapper for single deviation ID.
+type deviationIDParam struct {
+	DeviationID uuid.UUID `url:"deviationid"`
 }
 
 type Deviation struct {
@@ -113,18 +117,152 @@ func (s *deviationService) Deviation(deviationID uuid.UUID) (Deviation, error) {
 	return success, nil
 }
 
-func (s *deviationService) Content(deviationID uuid.UUID) (any, error) {
-	return nil, errors.New("not implemented yet")
+type Content struct {
+	HTML     string   `json:"html,omitempty"`
+	CSS      string   `json:"css,omitempty"`
+	CSSFonts []string `json:"css_fonts,omitempty"`
+	Session  *Session `json:"session,omitempty"`
 }
 
-func (s *deviationService) EmbeddedContent(deviationID uuid.UUID) (any, error) {
-	return nil, errors.New("not implemented yet")
+// Content fetches a full data that is not included in the main deviation
+// object.
+//
+// The endpoint works with journals and literatures. Deviation objects returned
+// from API contain only excerpt of a journal, use this endpoint to load full
+// content. Any custom CSS rules and fonts applied to journal are also returned.
+func (s *deviationService) Content(deviationID uuid.UUID) (Content, error) {
+	var (
+		success Content
+		failure Error
+	)
+	params := &deviationIDParam{DeviationID: deviationID}
+	_, err := s.sling.New().Get("content/").QueryStruct(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return Content{}, fmt.Errorf("unable to fetch deviation content: %w", err)
+	}
+	return success, nil
 }
 
-func (s *deviationService) Metadata() (any, error) {
-	return nil, errors.New("not implemented yet")
+type EmbeddedContentParams struct {
+	// The deviation ID of container deviation.
+	DeviationID uuid.UUID `url:"deviationid"`
+
+	// ID of embedded deviation to use as an offset.
+	OffsetDeviationID uuid.UUID `url:"offset_deviationid,omitempty"`
 }
 
-func (s *deviationService) WhoFaved() (any, error) {
-	return nil, errors.New("not implemented yet")
+// EmbeddedContent fetch a content embedded in a deviation.
+//
+// Journal and literature deviations support embedding of deviations inside
+// them.
+func (s *deviationService) EmbeddedContent(params *EmbeddedContentParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
+	var (
+		success OffsetResponse[Deviation]
+		failure Error
+	)
+	_, err := s.sling.New().Get("embeddedcontent/").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return OffsetResponse[Deviation]{}, fmt.Errorf("fetch content embedded in a deviation: %w", err)
+	}
+	return success, nil
+}
+
+type DeviationMetadata struct {
+	DeviationID          uuid.UUID            `json:"deviationid"`
+	PrintID              uuid.UUID            `json:"uuid,omitempty"`
+	Author               *User                `json:"author"`
+	IsWatching           bool                 `json:"is_watching"`
+	Title                string               `json:"title"`
+	Description          string               `json:"description"`
+	License              string               `json:"license"`
+	AllowsComments       bool                 `json:"allow_comments"`
+	Tags                 []DeviationTag       `json:"tags"`
+	IsFavourited         bool                 `json:"is_favourited"`
+	IsMature             bool                 `json:"is_mature"`
+	MatureLevel          string               `json:"mature_level,omitempty"`
+	MatureClassification []string             `json:"mature_classification,omitempty"`
+	Submission           *DeviationSubmission `json:"submission,omitempty"`
+	Stats                *DeviationStats      `json:"stats,omitempty"`
+	Camera               any                  `json:"camera,omitempty"`
+	Collections          []Folder             `json:"collections,omitempty"`
+	Galleries            []Folder             `json:"galleries,omitempty"`
+	CanPostComments      bool                 `json:"can_post_comments,omitempty"`
+}
+
+type DeviationTag struct {
+	Name      string `json:"tag_name"`
+	Sponsored bool   `json:"sponsored"`
+	Sponsor   bool   `json:"sponsor"`
+}
+
+type DeviationSubmission struct {
+	CreationTime  string `json:"creation_time"`
+	Category      string `json:"category"`
+	FileSize      string `json:"file_size,omitempty"`
+	Resolution    string `json:"resolution,omitempty"`
+	SubmittedWith struct {
+		App string `json:"app"`
+		URL string `json:"url"`
+	} `json:"submitted_with"`
+}
+
+type DeviationStats struct {
+	Views          int `json:"views"`
+	ViewsToday     int `json:"views_today,omitempty"`
+	Favourites     int `json:"favourites"`
+	Comments       int `json:"comments"`
+	Downloads      int `json:"downloads"`
+	DownloadsToday int `json:"downloads_today,omitempty"`
+}
+
+type MetadataResponse struct {
+	Metatada []DeviationMetadata `json:"metadata"`
+	Session  *Session            `json:"session,omitempty"`
+}
+
+type MetadataParams struct {
+	// The deviation IDs you want metadata for.
+	DeviationIDs []uuid.UUID `url:"deviationids"`
+
+	IncludeSubmission bool `url:"ext_submission,omitempty"`
+	IncludeCamera     bool `url:"ext_camera,omitempty"`
+	IncludeStats      bool `url:"ext_stats,omitempty"`
+	IncludeCollection bool `url:"ext_collection,omitempty"`
+	IncludeGallery    bool `url:"ext_gallery,omitempty"`
+	WithSession       bool `url:"with_session,omitempty"`
+}
+
+// Metadata fetches a deviation metadata for a set of deviations.
+//
+// This endpoint is limited to 50 deviations per query when fetching the base
+// data and 10 when fetching extended data.
+func (s *deviationService) Metadata(params *MetadataParams) (MetadataResponse, error) {
+	var (
+		success MetadataResponse
+		failure Error
+	)
+	_, err := s.sling.New().Get("metadata").QueryStruct(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return MetadataResponse{}, fmt.Errorf("unable to fetch deviation metadata: %w", err)
+	}
+	return success, nil
+}
+
+type FaveInfo struct {
+	User *User `json:"user"`
+	Time int64 `json:"time"`
+}
+
+// WhoFaved fetches a list of users who faved the deviation.
+func (s *deviationService) WhoFaved(deviationID uuid.UUID, page *OffsetParams) (OffsetResponse[FaveInfo], error) {
+	var (
+		success OffsetResponse[FaveInfo]
+		failure Error
+	)
+	params := &deviationIDParam{DeviationID: deviationID}
+	_, err := s.sling.New().Get("whofaved").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return OffsetResponse[FaveInfo]{}, fmt.Errorf("unable to fetch whofaved a deviation: %w", err)
+	}
+	return success, nil
 }

@@ -91,3 +91,58 @@ func (s *userService) DAmnToken() (string, error) {
 	}
 	return success.DAmnToken, nil
 }
+
+func (s *userService) Tiers(username string) ([]Deviation, error) {
+	var (
+		success singleResponse[Deviation]
+		failure Error
+	)
+	_, err := s.sling.New().Get("tiers/").Path(username).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return nil, fmt.Errorf("unable to user tiers: %w", err)
+	}
+	return success.Results, nil
+}
+
+// Watchers gets the user's list of watchers.
+func (s *userService) Watchers(username string, page *OffsetParams) (OffsetResponse[Friend], error) {
+	var (
+		success OffsetResponse[Friend]
+		failure Error
+	)
+	_, err := s.sling.New().Get("watchers/").Path(username).QueryStruct(page).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return OffsetResponse[Friend]{}, fmt.Errorf("unable to get user watchers: %w", err)
+	}
+	return success, nil
+}
+
+// Whoami fetches user info of authenticated user.
+func (s *userService) Whoami() (User, error) {
+	var (
+		success User
+		failure Error
+	)
+	_, err := s.sling.New().Get("whoami").Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return User{}, fmt.Errorf("unable to fetch whoami: %w", err)
+	}
+	return success, nil
+}
+
+// Whois fetches user info for given usernames.
+func (s *userService) Whois(usernames ...string) ([]User, error) {
+	type usernameParams struct {
+		Usernames []string `url:"usernames"` // TODO: Implement square brackets with number inside.
+	}
+	var (
+		success singleResponse[User]
+		failure Error
+	)
+	params := &usernameParams{Usernames: usernames}
+	_, err := s.sling.New().Post("whois/").BodyForm(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return nil, fmt.Errorf("unable to fetch whois: %w", err)
+	}
+	return success.Results, nil
+}

@@ -31,3 +31,7 @@ type CursorResponse[T any] struct {
 	PrevCursor string   `json:"prev_cursor"`
 	Session    *Session `json:"session,omitempty"`
 }
+
+type singleResponse[T any] struct {
+	Results []T `json:"results"`
+}

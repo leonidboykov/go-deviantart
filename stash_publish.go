@@ -1,6 +1,10 @@
 package deviantart
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+)
 
 const (
 	MatureLevelStrict   = "strict"
@@ -83,9 +87,9 @@ type StashPublishParams struct {
 }
 
 type StashPublishResponse struct {
-	Status      bool   `json:"status"`
-	URL         string `json:"url"`
-	DeviationID string `json:"deviationid"`
+	Status      bool      `json:"status"`
+	URL         string    `json:"url"`
+	DeviationID uuid.UUID `json:"deviationid"`
 }
 
 // Publish a Sta.sh item to deviantART.

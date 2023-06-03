@@ -49,7 +49,7 @@ type Profile struct {
 	Session Session `json:"session,omitempty"`
 }
 
-type ProfileParams struct {
+type GetProfileParams struct {
 	// Include collection folder info.
 	IncludeCollections bool `url:"ext_collections,omitempty"`
 
@@ -61,7 +61,7 @@ type ProfileParams struct {
 }
 
 // Profile gets user profile information.
-func (s *userService) Profile(username string, params *ProfileParams) (Profile, error) {
+func (s *userService) Profile(username string, params *GetProfileParams) (Profile, error) {
 	var (
 		success Profile
 		failure Error
@@ -71,4 +71,82 @@ func (s *userService) Profile(username string, params *ProfileParams) (Profile, 
 		return Profile{}, fmt.Errorf("unable to fetch profile: %w", err)
 	}
 	return success, nil
+}
+
+type usernameParams struct {
+	Username string `url:"username"`
+}
+
+// Posts returns all journals & status updates for a given user in a single feed.
+func (s *userService) Posts(username string, page *CursorParams) (CursorResponse[Deviation], error) {
+	var (
+		success CursorResponse[Deviation]
+		failure Error
+	)
+	params := &usernameParams{Username: username}
+	_, err := s.sling.New().Get("profile/posts").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return CursorResponse[Deviation]{}, fmt.Errorf("unable to fetch profile: %w", err)
+	}
+	return success, nil
+}
+
+var (
+	ArtistLevelNone         = "None"
+	ArtistLevelStudent      = "Student"
+	ArtistLevelHobbyist     = "Hobbyist"
+	ArtistLevelProfessional = "Professional"
+)
+
+var (
+	ArtistSpecialityNone          = "None"
+	ArtistSpecialityArtisanCrafts = "Artisan Crafts"
+	ArtistLevelDesignInterfaces   = "Design & Interfaces"
+	ArtistLevelDigitalArt         = "Digital Art"
+	ArtistLevelFilmAnimation      = "Film & Animation"
+	ArtistLevelLiterature         = "Literature"
+	ArtistLevelPhotography        = "Photography"
+	ArtistLevelTraditionalArt     = "Traditional Art"
+	ArtistLevelOther              = "Other"
+	ArtistLevelVaried             = "Varied"
+)
+
+type UserInfoParams struct {
+	// Is the user an artist?
+	UserIsArtist bool `url:"user_is_artist,omitempty"`
+
+	// If the user is an artist, what level are they.
+	ArtistLevel string `url:"artist_level,omitempty"`
+
+	// If the user is an artist, what is their specialty.
+	ArtistSpeciality string `url:"artist_specialty,omitempty"`
+
+	// The users location.
+	CountryID int `url:"countryid,omitempty"`
+
+	// The users personal website.
+	Website      string `url:"website,omitempty"`
+	WebsiteLabel string `url:"website_label,omitempty"`
+
+	// The users tagline.
+	Tagline string `url:"tagline,omitempty"`
+
+	ShowBadges  bool     `url:"show_badges,omitempty"`
+	Interests   []string `url:"interests,omitempty"`    // TODO: Check positional params.
+	SocialLinks []string `url:"social_links,omitempty"` // TODO: Check positional params.
+}
+
+// UpdateProfile updates the users profile information.
+//
+// Check [Countries] to get a list of countries and their IDs.
+func (s *userService) UpdateProfile(params *UserInfoParams) (bool, error) {
+	var (
+		success map[string]any
+		failure Error
+	)
+	_, err := s.sling.New().Post("profile/update").BodyForm(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return false, fmt.Errorf("unable to update user profile: %w", err)
+	}
+	return success["success"].(bool), nil
 }

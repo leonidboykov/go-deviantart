@@ -26,34 +26,38 @@ func newStashService(sling *sling.Sling) *stashService {
 }
 
 type StashMetadata struct {
-	Title          string        `json:"title"`
-	Path           string        `json:"path,omitempty"`
-	Size           int           `json:"size,omitempty"`
-	Description    string        `json:"description,omitempty"` // html
-	ParentID       int           `json:"parentid,omitempty"`
-	Thumb          *StashObject  `json:"thumb,omitempty"`
-	ArtistComments string        `json:"artist_comments,omitempty"` //html
-	OriginalURL    string        `json:"original_url,omitempty"`
-	Category       string        `json:"category,omitempty"`
-	CreationTime   int64         `json:"creation_time,omitempty"`
-	Files          []StashObject `json:"files,omitempty"`
-	Submission     *struct {
-		FileSize      string `json:"file_size,omitempty"`
-		Resolution    string `json:"resolution,omitempty"`
-		SubmittedWith *struct {
-			App string `json:"app,omitempty"`
-			URL string `json:"url,omitempty"`
-		} `json:"submitted_with,omitempty"`
-	} `json:"submission,omitempty"`
-	Stats *struct {
-		Views          int `json:"views,omitempty"`
-		ViewsToday     int `json:"views_today,omitempty"`
-		Downloads      int `json:"downloads,omitempty"`
-		DownloadsToday int `json:"downloads_today,omitempty"`
-	} `json:"stats,omitempty"`
-	Camera  any      `json:"camera,omitempty"`
-	StackID int      `json:"stackid"`
-	Tags    []string `json:"tags,omitempty"`
+	Title          string           `json:"title"`
+	Path           string           `json:"path,omitempty"`
+	Size           int              `json:"size,omitempty"`
+	Description    string           `json:"description,omitempty"` // html
+	ParentID       int              `json:"parentid,omitempty"`
+	Thumb          *StashObject     `json:"thumb,omitempty"`
+	ArtistComments string           `json:"artist_comments,omitempty"` //html
+	OriginalURL    string           `json:"original_url,omitempty"`
+	Category       string           `json:"category,omitempty"`
+	CreationTime   int64            `json:"creation_time,omitempty"`
+	Files          []StashObject    `json:"files,omitempty"`
+	Submission     *StashSubmission `json:"submission,omitempty"`
+	Stats          *StashStats      `json:"stats,omitempty"`
+	Camera         any              `json:"camera,omitempty"`
+	StackID        int              `json:"stackid"`
+	Tags           []string         `json:"tags,omitempty"`
+}
+
+type StashSubmission struct {
+	FileSize      string `json:"file_size,omitempty"`
+	Resolution    string `json:"resolution,omitempty"`
+	SubmittedWith *struct {
+		App string `json:"app,omitempty"`
+		URL string `json:"url,omitempty"`
+	} `json:"submitted_with,omitempty"`
+}
+
+type StashStats struct {
+	Views          int `json:"views,omitempty"`
+	ViewsToday     int `json:"views_today,omitempty"`
+	Downloads      int `json:"downloads,omitempty"`
+	DownloadsToday int `json:"downloads_today,omitempty"`
 }
 
 // Stack fetches a stash stack's metadata.
@@ -144,6 +148,15 @@ func (s *stashService) Delta() (any, error) {
 	return nil, errors.New("not implemented yet")
 }
 
+type StashMoveResponse struct {
+	Target  StashMetadata   `json:"target"`
+	Changes []StashMetadata `json:"changes"`
+}
+
+type moveParams struct {
+	TargetID int64 `url:"targetid,omitempty"`
+}
+
 // Move moves the stack into the target stack.
 //
 // The response includes updated metadata of the target stack and changes in its
@@ -153,12 +166,89 @@ func (s *stashService) Delta() (any, error) {
 // no children stacks yet.
 //
 // Requires Authorization Code grant.
-func (s *stashService) Move(stackID int64, targetID int64) (any, error) {
-	// TODO: Checkout this endpoint.
-	return nil, errors.New("not implemented yet")
+func (s *stashService) Move(stackID, targetID int64) (StashMoveResponse, error) {
+	var (
+		success StashMoveResponse
+		failure Error
+	)
+	params := &moveParams{TargetID: targetID}
+	_, err := s.sling.New().Post("move/").Path(strconv.FormatInt(stackID, 10)).BodyForm(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return StashMoveResponse{}, fmt.Errorf("unable to move stash: %w", err)
+	}
+	return success, nil
 }
 
-func (s *stashService) Position(stackID int64, position int64) (any, error) {
-	// TODO: Checkout this endpoint.
-	return nil, errors.New("not implemented yet")
+func (s *stashService) Position(stackID, position int64) (bool, error) {
+	type positionParams struct {
+		Position int64 `url:"position"`
+	}
+	var (
+		success map[string]any
+		failure Error
+	)
+	stackPath := strconv.FormatInt(stackID, 10)
+	params := &positionParams{Position: position}
+	_, err := s.sling.New().Post("position/").Path(stackPath).BodyForm(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return false, fmt.Errorf("unable to change stash position: %w", err)
+	}
+	return success["success"].(bool), nil
+}
+
+type StashUserdata struct {
+	Features   []string `json:"features"`
+	Agreements []string `json:"agreements"`
+}
+
+// Userdata fetches users data about features and agreements.
+//
+// TODO: Check if this endpoint has any use.
+func (s *stashService) Userdata() (StashUserdata, error) {
+	var (
+		success StashUserdata
+		failure Error
+	)
+	_, err := s.sling.New().Get("publish/userdata").Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return StashUserdata{}, fmt.Errorf("unable to fetch userdata: %w", err)
+	}
+	return success, nil
+}
+
+type StashSpace struct {
+	AvailableSpace int `json:"available_space"`
+	TotalSpace     int `json:"total_space"`
+}
+
+// Space returns how much sta.sh space (expressed in bytes) a user has available
+// for new uploads.
+func (s *stashService) Space() (StashSpace, error) {
+	var (
+		success StashSpace
+		failure Error
+	)
+	_, err := s.sling.New().Get("space").Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return StashSpace{}, fmt.Errorf("unable to fetch sta.sh space: %w", err)
+	}
+	return success, nil
+}
+
+type StashUpdateParams struct {
+	Title       string `url:"title,omitempty"`
+	Description string `url:"description,omitempty"`
+}
+
+func (s *stashService) Update(stackID int64, params *StashUpdateParams) (bool, error) {
+	var (
+		success map[string]any
+		failure Error
+	)
+	stackPath := strconv.FormatInt(stackID, 10)
+	_, err := s.sling.New().Post("update/").Path(stackPath).BodyForm(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return false, fmt.Errorf("unable to update stack: %w", err)
+	}
+	return success["success"].(bool), nil
 }
