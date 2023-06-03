@@ -114,21 +114,17 @@ func (s *deviationService) Deviation(deviationID uuid.UUID) (Deviation, error) {
 }
 
 func (s *deviationService) Content(deviationID uuid.UUID) (any, error) {
-	// TODO: Implement /deviation/content endpoint.
 	return nil, errors.New("not implemented yet")
 }
 
 func (s *deviationService) EmbeddedContent(deviationID uuid.UUID) (any, error) {
-	// TODO: Implement /deviation/embeddedcontent endpoint.
 	return nil, errors.New("not implemented yet")
 }
 
 func (s *deviationService) Metadata() (any, error) {
-	// TODO: Implement /metadata.
 	return nil, errors.New("not implemented yet")
 }
 
 func (s *deviationService) WhoFaved() (any, error) {
-	// TODO: Implement /whofaved.
 	return nil, errors.New("not implemented yet")
 }

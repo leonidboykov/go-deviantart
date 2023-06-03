@@ -208,7 +208,7 @@ func (s *messagesService) StackMentions(stackID string, params *StackFeedbackPar
 		success MessagesMentions
 		failure Error
 	)
-	_, err := s.sling.New().Get("messages/").Path(stackID).QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("mentions/").Path(stackID).QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return MessagesMentions{}, fmt.Errorf("unable to fetch stack mentions: %w", err)
 	}

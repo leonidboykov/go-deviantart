@@ -34,11 +34,8 @@ type CollectionsFolderParams struct {
 }
 
 type FolderContent struct {
-	HasMore    bool        `json:"has_more,omitempty"`
-	NextOffset int         `json:"next_offset,omitempty"`
-	Name       string      `json:"name,omitempty"`
-	Results    []Deviation `json:"results,omitempty"`
-	Session    *Session    `json:"session,omitempty"`
+	Name string `json:"name,omitempty"`
+	OffsetResponse[Deviation]
 }
 
 // Folder fetches collection folder contents.
@@ -55,14 +52,14 @@ func (s *collectionsService) Folder(folderID uuid.UUID, params *CollectionsFolde
 }
 
 // All fetches all deviations in user's collection.
-func (s *collectionsService) All(params *CollectionsFolderParams) (FolderContent, error) {
+func (s *collectionsService) All(params *CollectionsFolderParams) (OffsetResponse[Deviation], error) {
 	var (
-		success FolderContent
+		success OffsetResponse[Deviation]
 		failure Error
 	)
 	_, err := s.sling.New().Get("all").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return FolderContent{}, fmt.Errorf("unable to fetch all content: %w", err)
+		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch all content: %w", err)
 	}
 	return success, nil
 }

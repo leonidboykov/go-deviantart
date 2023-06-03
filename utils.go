@@ -8,7 +8,7 @@ func (c *Client) Placebo() error {
 		success StatusResponse
 		failure Error
 	)
-	_, err := c.base.New().Get("placebo/").Receive(&success, &failure)
+	_, err := c.base.New().Get("placebo").Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return fmt.Errorf("unable to validate access_token: %w", err)
 	}

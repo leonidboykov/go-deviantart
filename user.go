@@ -7,23 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// TODO: USER
-// 	/friends/{username}
-// 	/friends/search
-// 	/friends/unwatch/{username}
-// 	/friends/watch/{username}
-// 	/friends/watching/{username}
-// 	/profile/{username}
-// 	/profile/posts
-// 	/profile/update
-// 	/statuses/
-// 	/statuses/{statusid}
-// 	/statuses/post
-// 	/tiers/{username}
-// 	/watchers/{username}
-// 	/whoami
-// 	/whois
-
 type Session struct {
 	User struct {
 		UserID      uuid.UUID `json:"userid"`
@@ -80,12 +63,15 @@ type User struct {
 }
 
 type userService struct {
-	sling *sling.Sling
+	sling   *sling.Sling
+	Friends *friendsService
 }
 
 func newUserService(sling *sling.Sling) *userService {
+	base := sling.Path("user/")
 	return &userService{
-		sling: sling.Path("user/"),
+		sling:   base,
+		Friends: newFriendsService(base.New()),
 	}
 }
 

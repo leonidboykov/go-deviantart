@@ -1,21 +1,11 @@
 package deviantart
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/dghubble/sling"
 	"github.com/google/uuid"
 )
-
-// TODO: COMMENTS
-// 	/{commentid}/siblings
-// 	/deviation/{deviationid}
-// 	/post/deviation/{deviationid}
-// 	/post/profile/{username}
-// 	/post/status/{statusid}
-// 	/profile/{username}
-// 	/status/{statusid}
 
 type commentsService struct {
 	sling *sling.Sling
@@ -86,7 +76,7 @@ func (s *commentsService) CommentSiblings(commentID uuid.UUID, params *CommentSi
 	return success, nil
 }
 
-type DeviationCommentsParams struct {
+type FetchCommentsParams struct {
 	// The commentid you want to fetch.
 	CommentID uuid.UUID `url:"commentid,omitempty"`
 
@@ -100,7 +90,7 @@ type DeviationCommentsParams struct {
 	Limit int `url:"limit,omitempty"`
 }
 
-type DeviationComments struct {
+type CommentsResponse struct {
 	HasMore    bool      `json:"has_more,omitempty"`
 	NextOffset int       `json:"next_offset,omitempty"`
 	HasLess    bool      `json:"has_less,omitempty"`
@@ -110,19 +100,86 @@ type DeviationComments struct {
 }
 
 // DeviationComments fetch comments posted on deviation.
-func (s *commentsService) DeviationComments(deviationID uuid.UUID, params *DeviationCommentsParams) (DeviationComments, error) {
+func (s *commentsService) DeviationComments(deviationID uuid.UUID, params *FetchCommentsParams) (CommentsResponse, error) {
 	var (
-		success DeviationComments
+		success CommentsResponse
 		failure Error
 	)
 	_, err := s.sling.New().Get("deviation/").Path(deviationID.String()).QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return DeviationComments{}, fmt.Errorf("unable to fetch deviant comments: %w", err)
+		return CommentsResponse{}, fmt.Errorf("unable to fetch deviation comments: %w", err)
 	}
 	return success, nil
 }
 
-func (s *commentsService) PostDeviationComments(deviationID uuid.UUID) error {
-	// TODO: Implement /comments/post/deviation/{deviationid}.
-	return errors.New("not implemented yet")
+func (s *commentsService) ProfileComments(username string, params *FetchCommentsParams) (CommentsResponse, error) {
+	var (
+		success CommentsResponse
+		failure Error
+	)
+	_, err := s.sling.New().Get("profile/").Path(username).QueryStruct(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return CommentsResponse{}, fmt.Errorf("unable to fetch profile comments: %w", err)
+	}
+	return success, nil
+}
+
+// StatusComments fetch comments posted on status.
+func (s *commentsService) StatusComments(statusID uuid.UUID, params *FetchCommentsParams) (CommentsResponse, error) {
+	var (
+		success CommentsResponse
+		failure Error
+	)
+	_, err := s.sling.New().Get("status/").Path(statusID.String()).QueryStruct(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return CommentsResponse{}, fmt.Errorf("unable to fetch status comments: %w", err)
+	}
+	return success, nil
+}
+
+type CommentParams struct {
+	// The Comment ID you are replying to.
+	CommentID uuid.UUID `url:"commentid,omitempty"`
+
+	// The comment text.
+	Text string `url:"body"`
+}
+
+// CommentDeviation posts a comment on a deviation.
+func (s *commentsService) CommentDeviation(deviationID uuid.UUID, params *CommentParams) (Comment, error) {
+	var (
+		success Comment
+		failure Error
+	)
+	_, err := s.sling.New().Post("post/deviation/").Path(deviationID.String()).BodyForm(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return Comment{}, fmt.Errorf("unable to comment a deviation: %w", err)
+	}
+	return success, nil
+}
+
+// CommentProfile posts a comment on a users profile.
+func (s *commentsService) CommentProfile(username string, params *CommentParams) (Comment, error) {
+	var (
+		success Comment
+		failure Error
+	)
+	_, err := s.sling.New().Post("post/profile/").Path(username).BodyForm(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return Comment{}, fmt.Errorf("unable to comment a profile: %w", err)
+	}
+	return success, nil
+}
+
+// CommentStatus posts a comment on a status.
+func (s *commentsService) CommentStatus(statusID uuid.UUID, params *CommentParams) (Comment, error) {
+	var (
+		success Comment
+		failure Error
+	)
+	_, err := s.sling.New().Post("post/status/").Path(statusID.String()).BodyForm(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return Comment{}, fmt.Errorf("unable to comment a status: %w", err)
+	}
+	return success, nil
 }

@@ -5,9 +5,10 @@ import (
 	"fmt"
 
 	"github.com/dghubble/sling"
-	"github.com/leonidboykov/deviantart/internal/authserver"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
+
+	"github.com/leonidboykov/deviantart/internal/authserver"
 )
 
 // Authenticator describes authentication pipeline.

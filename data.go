@@ -7,7 +7,7 @@ type Country struct {
 
 // Countries is a saved list of countries.
 //
-// Feel free to report the issue if country list was changed ;)
+// Feel free to report the issue if country list has been changed.
 var Countries = []Country{
 	{CountryID: 1, Name: "United States"},
 	{CountryID: 2, Name: "Canada"},
