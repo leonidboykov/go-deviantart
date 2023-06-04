@@ -93,6 +93,13 @@ func (s *browseService) Newest(params *SearchParams, page *OffsetParams) (Offset
 	return success, nil
 }
 
+var (
+	TimeRangeNow   = "now"
+	TimeRangeWeek  = "1week"
+	TimeRangeMonth = "1month"
+	TimeRangeAll   = "alltime"
+)
+
 type PopularParams struct {
 	// Search query term.
 	Query string `url:"q,omitempty"`
@@ -116,15 +123,20 @@ func (s *browseService) Popular(params *PopularParams, page *OffsetParams) (Offs
 	return success, nil
 }
 
-// TODO: what is it?
-func (s *browseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetResponse[Deviation], error) {
+type JournalStatus struct {
+	Journal *Deviation `json:"journal"`
+	Status  *Status    `json:"status"`
+}
+
+// PostsDeviantsYouWatch returns deviants you watch.
+func (s *browseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetResponse[JournalStatus], error) {
 	var (
-		success OffsetResponse[Deviation]
+		success OffsetResponse[JournalStatus]
 		failure Error
 	)
 	_, err := s.sling.New().Get("posts/deviantsyouwatch").QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch deviants for you: %w", err)
+		return OffsetResponse[JournalStatus]{}, fmt.Errorf("unable to fetch deviants for you: %w", err)
 	}
 	return success, nil
 }

@@ -16,11 +16,11 @@ type CreateJournalParams struct {
 	// Journal tags.
 	Tags []string `url:"tags,omitempty"`
 
-	// Cover deviation ID. // TODO: Is it UUID?
-	CoverImageDeviationID string `url:"cover_image_deviation_id,omitempty"`
+	// Cover deviation ID.
+	CoverImageDeviationID uuid.UUID `url:"cover_image_deviation_id,omitempty"`
 
 	// ID of the embeded deviation.
-	EmbeddedImageDeviationID string `url:"embedded_image_deviation_id,omitempty"`
+	EmbeddedImageDeviationID uuid.UUID `url:"embedded_image_deviation_id,omitempty"`
 
 	// Submission is mature or not.
 	IsMature bool `url:"is_mature,omitempty"`
@@ -52,8 +52,8 @@ type UpdateJournalParams struct {
 	// Journal tags.
 	Tags []string `url:"tags,omitempty"`
 
-	// Cover deviation ID. // TODO: Is it UUID?
-	CoverImageDeviationID string `url:"cover_image_deviation_id,omitempty"`
+	// Cover deviation ID.
+	CoverImageDeviationID uuid.UUID `url:"cover_image_deviation_id,omitempty"`
 
 	// Reset cover deviation ID.
 	ResetCoverImageDeviationID bool `url:"reset_cover_image_deviation_id,omitempty"`

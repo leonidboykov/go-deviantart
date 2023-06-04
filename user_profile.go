@@ -18,21 +18,21 @@ type ModuleCoverDeviation struct {
 }
 
 type Profile struct {
-	User             User                 `json:"user"`
-	IsWatching       bool                 `json:"is_watching"`
-	ProfileURL       string               `json:"profile_url"`
-	UserIsArtist     bool                 `json:"user_is_artist"`
-	ArtistLevel      string               `json:"artist_level,omitempty"`
-	ArtistSpeciality string               `json:"artist_specialty,omitempty"`
-	RealName         string               `json:"real_name"`
-	Tagline          string               `json:"tagline"`
-	CountryID        uint8                `json:"countryid"`
-	Country          string               `json:"country"`
-	Website          string               `json:"website"`
-	Bio              string               `json:"bio"`
-	CoverPhoto       string               `json:"cover_photo,omitempty"`
-	CoverDeviation   ModuleCoverDeviation `json:"cover_deviation,omitempty"`
-	LastStatus       any                  `json:"last_status,omitempty"` // TODO: Status object.
+	User             User                  `json:"user"`
+	IsWatching       bool                  `json:"is_watching"`
+	ProfileURL       string                `json:"profile_url"`
+	UserIsArtist     bool                  `json:"user_is_artist"`
+	ArtistLevel      string                `json:"artist_level,omitempty"`
+	ArtistSpeciality string                `json:"artist_specialty,omitempty"`
+	RealName         string                `json:"real_name"`
+	Tagline          string                `json:"tagline"`
+	CountryID        uint8                 `json:"countryid"`
+	Country          string                `json:"country"`
+	Website          string                `json:"website"`
+	Bio              string                `json:"bio"`
+	CoverPhoto       string                `json:"cover_photo,omitempty"`
+	CoverDeviation   *ModuleCoverDeviation `json:"cover_deviation,omitempty"`
+	LastStatus       *Status               `json:"last_status,omitempty"`
 	Stats            struct {
 		UserDeviations   uint32 `json:"user_deviations"`
 		UserFavourites   uint32 `json:"user_favourites"`

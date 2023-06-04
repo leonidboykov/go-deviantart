@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserStatus struct {
+type Status struct {
 	StatusID      uuid.UUID `json:"statusid,omitempty"`
 	Body          string    `json:"html,omitempty"`
 	Timestamp     string    `json:"ts,omitempty"` // TODO: Parse to time.Time.
@@ -16,9 +16,9 @@ type UserStatus struct {
 	IsDeleted     bool      `json:"is_deleted,omitempty"`
 	Author        *User     `json:"user,omitempty"`
 	Items         []struct {
-		Type      string      `json:"type"`
-		Status    *UserStatus `json:"status,omitempty"`
-		Deviation *Deviation  `json:"deviation,omitempty"`
+		Type      string     `json:"type"`
+		Status    *Status    `json:"status,omitempty"`
+		Deviation *Deviation `json:"deviation,omitempty"`
 	} `json:"items,omitempty"`
 	TextContent *struct {
 		Excerpt string `json:"excerpt"`
@@ -31,28 +31,28 @@ type UserStatus struct {
 }
 
 // Status fetches the status.
-func (s *userService) Status(statusID uuid.UUID) (UserStatus, error) {
+func (s *userService) Status(statusID uuid.UUID) (Status, error) {
 	var (
-		success UserStatus
+		success Status
 		failure Error
 	)
 	_, err := s.sling.New().Get("statuses/").Path(statusID.String()).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return UserStatus{}, fmt.Errorf("unable to fetch status: %w", err)
+		return Status{}, fmt.Errorf("unable to fetch status: %w", err)
 	}
 	return success, nil
 }
 
 // Statuses fetches user statuses.
-func (s *userService) Statuses(username string, page *OffsetParams) (OffsetResponse[UserStatus], error) {
+func (s *userService) Statuses(username string, page *OffsetParams) (OffsetResponse[Status], error) {
 	var (
-		success OffsetResponse[UserStatus]
+		success OffsetResponse[Status]
 		failure Error
 	)
 	params := &usernameParams{Username: username}
 	_, err := s.sling.New().Get("statuses").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return OffsetResponse[UserStatus]{}, fmt.Errorf("unable to fetch user statuses: %w", err)
+		return OffsetResponse[Status]{}, fmt.Errorf("unable to fetch user statuses: %w", err)
 	}
 	return success, nil
 }
@@ -62,7 +62,7 @@ type PostStatusParams struct {
 	Text string `url:"body,omitempty"`
 
 	// The ID of the object you wish to share.
-	ID uuid.UUID `url:"id,omitempty"` // TODO: Is it UUID?
+	ID uuid.UUID `url:"id,omitempty"`
 
 	ParentID uuid.UUID
 }

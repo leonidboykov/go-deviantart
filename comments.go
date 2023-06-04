@@ -59,7 +59,7 @@ type CommentSiblings struct {
 		Parent        *Comment   `json:"parent,omitempty"`
 		ItemProfile   *User      `json:"item_profile,omitempty"`
 		ItemDeviation *Deviation `json:"item_deviation,omitempty"`
-		ItemStatus    any        `json:"item_status,omitempty"` // TODO: Status object.
+		ItemStatus    *Status    `json:"item_status,omitempty"`
 	} `json:"context,omitempty"`
 }
 

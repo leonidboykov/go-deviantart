@@ -29,7 +29,7 @@ type Message struct {
 	Subject    *struct {
 		Profile    *User      `json:"profile,omitempty"`
 		Deviation  *Deviation `json:"deviation,omitempty"`
-		Status     any        `json:"status,omitempty"` // TODO: Status object
+		Status     *Status    `json:"status,omitempty"`
 		Comment    *Comment   `json:"comment,omitempty"`
 		Collection *Folder    `json:"collection"`
 		Gallery    *Folder    `json:"gallery"`
@@ -37,7 +37,7 @@ type Message struct {
 	HTML       string     `json:"html,omitempty"`
 	Profile    *User      `json:"profile,omitempty"`
 	Deviation  *Deviation `json:"deviation,omitempty"`
-	Status     any        `json:"status,omitempty"` // TODO: Status object
+	Status     *Status    `json:"status,omitempty"`
 	Comment    *Comment   `json:"comment,omitempty"`
 	Collection *Folder    `json:"collection,omitempty"`
 }
