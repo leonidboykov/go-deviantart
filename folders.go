@@ -7,20 +7,31 @@ import (
 	"github.com/google/uuid"
 )
 
+// TODO: Embed to Gallery and Collection?
 type Folder struct {
 	FolderID uuid.UUID `json:"folderid"`
 	Name     string    `json:"name"`
-	Owner    *User     `json:"owner,omitempty"`
+	Owner    *User     `json:"owner,omitempty"` // TODO: Do we need this field?
 }
 
-type foldersService struct {
+type foldersService[T Collection | Gallery] struct {
 	sling *sling.Sling
 }
 
-func newFoldersService(sling *sling.Sling) *foldersService {
-	return &foldersService{
+func newFoldersService[T Collection | Gallery](sling *sling.Sling) *foldersService[T] {
+	return &foldersService[T]{
 		sling: sling,
 	}
+}
+
+type FolderParams struct {
+	// The user who owns the folder, defaults to current user.
+	Username string `url:"username,omitempty"`
+
+	// Sort results by either newest or popular (when querying all folders
+	// only).
+	// This field is supported only by galleries.
+	SortMode string `url:"mode,omitempty"` // values(newest, popular) default: popular
 }
 
 type FoldersParams struct {
@@ -35,23 +46,56 @@ type FoldersParams struct {
 
 	// Filters collections with no deviations if true.
 	FilterEmptyFolder bool `url:"filter_empty_folder,omitempty"`
-
-	// The pagination offset.
-	Offset int `url:"offset,omitempty"`
-
-	// The pagination limit.
-	Limit int `url:"limit,omitempty"`
 }
 
-// Folders fetches collection folders.
-func (s *foldersService) Folders(params *CollectionsFolderParams) (FolderContent, error) {
+type FolderContent struct {
+	OffsetResponse[Deviation]
+	Name string `json:"name"`
+}
+
+// Folder fetches folder contents.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+func (s *foldersService[T]) Folder(folderID uuid.UUID, params *FolderParams, page *OffsetParams) (FolderContent, error) {
 	var (
 		success FolderContent
 		failure Error
 	)
+	_, err := s.sling.New().Get(folderID.String()).QueryStruct(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return FolderContent{}, fmt.Errorf("unable to fetch folder: %w", err)
+	}
+	return success, nil
+}
+
+type UsernameParams struct {
+	Username string `url:"username,omitempty"`
+}
+
+// // All gets the "all" view of a users collection/gallery.
+func (s *foldersService[T]) All(params *UsernameParams) (OffsetResponse[Deviation], error) {
+	var (
+		success OffsetResponse[Deviation]
+		failure Error
+	)
+	_, err := s.sling.New().Get("all").QueryStruct(params).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch all content: %w", err)
+	}
+	return success, nil
+}
+
+// Folders fetches collection folders.
+func (s *foldersService[T]) Folders(params *UsernameParams, page *OffsetParams) (OffsetResponse[T], error) {
+	var (
+		success OffsetResponse[T]
+		failure Error
+	)
 	_, err := s.sling.New().Get("folders").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return FolderContent{}, fmt.Errorf("unable to fetch folders: %w", err)
+		return OffsetResponse[T]{}, fmt.Errorf("unable to fetch folders: %w", err)
 	}
 	return success, nil
 }
@@ -64,7 +108,7 @@ type CopyDeviationsParams struct {
 // CopyDeviations copies a list of deviations to a folder destination.
 //
 // Requires Authorization Code grant.
-func (s *foldersService) CopyDeviations(params *CopyDeviationsParams) error {
+func (s *foldersService[T]) CopyDeviations(params *CopyDeviationsParams) error {
 	var (
 		success map[string]any
 		failure Error
@@ -76,19 +120,28 @@ func (s *foldersService) CopyDeviations(params *CopyDeviationsParams) error {
 	return nil
 }
 
-type createFolderParams struct {
+type CreateFolderParams struct {
+	// The name of the folder to create.
 	Folder string `url:"folder"`
+
+	// Folder description.
+	// This field is supported only by galleries.
+	Description string `url:"description,omitempty"`
+
+	// The UUID of the parent gallery if this is a subgallery.
+	// This field is supported only by galleries.
+	ParentFolderID uuid.UUID `url:"parent_folderid,omitempty"`
 }
 
 // Creates new collection folder.
 //
 // Requires Authorization Code grant.
-func (s *foldersService) Create(folderName string) (Folder, error) {
+func (s *foldersService[T]) Create(params *CreateFolderParams) (Folder, error) {
 	var (
 		success Folder
 		failure Error
 	)
-	_, err := s.sling.New().Post("folders/create").BodyForm(&createFolderParams{Folder: folderName}).Receive(&success, &failure)
+	_, err := s.sling.New().Post("folders/create").BodyForm(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return Folder{}, fmt.Errorf("unable to create folder: %w", err)
 	}
@@ -107,11 +160,11 @@ type MoveDeviationsParams struct {
 }
 
 // MoveDeviations moves a list of deviations to a folder destination.
-func (s *foldersService) MoveDeviations(params *MoveDeviationsParams) error {
+func (s *foldersService[T]) MoveDeviations(params *MoveDeviationsParams) error {
 	var (
 		failure Error
 	)
-	_, err := s.sling.New().Post("folder/move_destination").BodyForm(params).Receive(nil, &failure)
+	_, err := s.sling.New().Post("folders/move_destination").BodyForm(params).Receive(nil, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return fmt.Errorf("unable to move deviations: %w", err)
 	}
@@ -121,11 +174,11 @@ func (s *foldersService) MoveDeviations(params *MoveDeviationsParams) error {
 // Remove deletes collection folder.
 //
 // Requires Authorization Code grant.
-func (s *foldersService) Remove(folderID uuid.UUID) error {
+func (s *foldersService[T]) Remove(folderID uuid.UUID) error {
 	var (
 		failure Error
 	)
-	_, err := s.sling.New().Get("remove/").Path(folderID.String()).Receive(nil, &failure)
+	_, err := s.sling.New().Get("folders/remove/").Path(folderID.String()).Receive(nil, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return fmt.Errorf("unable to remove folder: %w", err)
 	}
@@ -141,11 +194,11 @@ type RemoveDeviationsParams struct {
 }
 
 // RemoveDeviations removes a list of deviations from a gallery folder.
-func (s *foldersService) RemoveDeviations(params *RemoveDeviationsParams) error {
+func (s *foldersService[T]) RemoveDeviations(params *RemoveDeviationsParams) error {
 	var (
 		failure Error
 	)
-	_, err := s.sling.New().Post("/remove_deviations").BodyForm(params).Receive(nil, &failure)
+	_, err := s.sling.New().Post("folders/remove_deviations").BodyForm(params).Receive(nil, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return fmt.Errorf("unable to remove deviations: %w", err)
 	}
@@ -167,7 +220,7 @@ type UpdateFoldersParams struct {
 }
 
 // Update updates folder.
-func (s *foldersService) Update(params *UpdateFoldersParams) error {
+func (s *foldersService[T]) Update(params *UpdateFoldersParams) error {
 	var (
 		failure Error
 	)
@@ -190,7 +243,7 @@ type UpdateDeviationOrderParams struct {
 }
 
 // UpdateDeviationOrder updates order of deviation in folder.
-func (s *foldersService) UpdateDeviationOrder(params *UpdateDeviationOrderParams) error {
+func (s *foldersService[T]) UpdateDeviationOrder(params *UpdateDeviationOrderParams) error {
 	var (
 		failure Error
 	)
@@ -210,7 +263,7 @@ type UpdateOrderParams struct {
 }
 
 // UpdateOrder rearranges the position of folders.
-func (s *foldersService) UpdateOrder(params *UpdateOrderParams) error {
+func (s *foldersService[T]) UpdateOrder(params *UpdateOrderParams) error {
 	var (
 		failure Error
 	)

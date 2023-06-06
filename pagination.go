@@ -16,6 +16,10 @@ type OffsetResponse[T any] struct {
 	HasMore    bool     `json:"has_more"`
 	NextOffset uint32   `json:"next_offset,omitempty"`
 	Session    *Session `json:"session,omitempty"`
+
+	// This field is used in some endpoints with a query parameter.
+	// TODO: Use separate struct and API method (?).
+	EstimatedTotal uint32 `json:"estimated_total,omitempty"`
 }
 
 // CursorParams params for cursor-based pagination.

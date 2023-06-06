@@ -24,6 +24,13 @@ type DailyDeviationsParams struct {
 }
 
 // DailyDeviations fetches daily deviations.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//
+// TODO: The endpoint returns the `has_more` field, but there is no offset or
+// cursor pagination information. This case requires further investigation.
 func (s *browseService) DailyDeviations(params *DailyDeviationsParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
@@ -37,6 +44,10 @@ func (s *browseService) DailyDeviations(params *DailyDeviationsParams) (OffsetRe
 }
 
 // DeviantsYouWatch fetches deviations of deviants you watch.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *browseService) DeviantsYouWatch(page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
@@ -60,6 +71,12 @@ type MoreLikeThisPreviewResponse struct {
 	} `json:"suggested_collections,omitempty"`
 }
 
+// MoreLikeThisPreview fetches More Like This preview result for a seed deviation.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - browse.mlt
 func (s *browseService) MoreLikeThisPreview(seed uuid.UUID) (MoreLikeThisPreviewResponse, error) {
 	type seedParams struct {
 		Seed uuid.UUID `url:"seed"`
@@ -77,10 +94,16 @@ func (s *browseService) MoreLikeThisPreview(seed uuid.UUID) (MoreLikeThisPreview
 
 type SearchParams struct {
 	// Search query term.
+	//
+	// Estimated total results count would be available on EstimatedTotal field.
 	Query string `url:"q,omitempty"`
 }
 
 // Newest fetches newest deviations.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *browseService) Newest(params *SearchParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
@@ -102,6 +125,8 @@ var (
 
 type PopularParams struct {
 	// Search query term.
+	//
+	// Estimated total results count would be available on EstimatedTotal field.
 	Query string `url:"q,omitempty"`
 
 	// The timerange.
@@ -111,6 +136,13 @@ type PopularParams struct {
 }
 
 // Popular fetches popular deviations.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//
+// BUG: Query does not work properly.
+// See: https://github.com/wix-incubator/DeviantArt-API/issues/206.
 func (s *browseService) Popular(params *PopularParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
@@ -129,6 +161,10 @@ type JournalStatus struct {
 }
 
 // PostsDeviantsYouWatch returns deviants you watch.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *browseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetResponse[JournalStatus], error) {
 	var (
 		success OffsetResponse[JournalStatus]
@@ -142,6 +178,13 @@ func (s *browseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetRespons
 }
 
 // Recommended fetches recommended deviations.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//
+// TODO: Documentation specifies the `suggested_reasons` field but is absend in
+// all responses. This case requires further investigation.
 func (s *browseService) Recommended(params *SearchParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
@@ -154,45 +197,38 @@ func (s *browseService) Recommended(params *SearchParams) (OffsetResponse[Deviat
 	return success, nil
 }
 
-type TagsParams struct {
-	// The tag to browse.
-	Tag string `url:"tag"`
-}
-
 // Tags fetches a tag.
 //
-// NOTE: This endpoing supports cursor- and offset-base pagination.
+// NOTE: This endpoint supports cursor- and offset-base pagination.
 // But for simplicity, I'll stick to cursor params for now.
-func (s *browseService) Tags(params *TagsParams, page *CursorParams) (CursorResponse[Deviation], error) {
+func (s *browseService) Tags(tag string, page *CursorParams) (CursorResponse[Deviation], error) {
+	type tagParams struct {
+		Tag string `url:"tag"`
+	}
 	var (
 		success CursorResponse[Deviation]
 		failure Error
 	)
-	_, err := s.sling.New().Get("tags").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
+	_, err := s.sling.New().Get("tags").QueryStruct(&tagParams{Tag: tag}).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return CursorResponse[Deviation]{}, fmt.Errorf("unable to fetch tags: %w", err)
 	}
 	return success, nil
 }
 
-type TagsSearchResponse struct {
-	Results []struct {
-		Name string `json:"tag_name"`
-	} `json:"results"`
-}
-
-type TagsSearchParams struct {
-	TagName     string `url:"tag_name"`
-	WithSession bool   `url:"with_session,omitempty"`
-}
-
 // TagsSearch autocompletes tags.
-func (s *browseService) TagsSearch(params *TagsSearchParams) ([]string, error) {
+//
+// The `tag_name“ parameter should not contain spaces. If it does, spaces will
+// be stripped and remainder will be treated as a single tag.
+func (s *browseService) TagsSearch(tag string) ([]string, error) {
+	type tagName struct {
+		Name string `json:"tag_name" url:"tag_name"`
+	}
 	var (
-		success TagsSearchResponse
+		success singleResponse[tagName]
 		failure Error
 	)
-	_, err := s.sling.New().Get("tags/search").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("tags/search").QueryStruct(&tagName{Name: tag}).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return nil, fmt.Errorf("unable to search tags: %w", err)
 	}
@@ -204,18 +240,20 @@ func (s *browseService) TagsSearch(params *TagsSearchParams) ([]string, error) {
 	return tags, nil
 }
 
-type TopicParams struct {
-	// Topic name.
-	Topic string `url:"topic"`
-}
-
 // Topic fetches topic deviations.
-func (s *browseService) Topic(params *TopicParams, page *CursorParams) (CursorResponse[Deviation], error) {
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+func (s *browseService) Topic(topic string, page *CursorParams) (CursorResponse[Deviation], error) {
+	type topicParams struct {
+		Topic string `url:"topic"`
+	}
 	var (
 		success CursorResponse[Deviation]
 		failure Error
 	)
-	_, err := s.sling.New().Get("topic").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
+	_, err := s.sling.New().Get("topic").QueryStruct(&topicParams{Topic: topic}).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return CursorResponse[Deviation]{}, fmt.Errorf("unable to fetch topic: %w", err)
 	}
@@ -226,7 +264,6 @@ type Topic struct {
 	Name              string      `json:"name"`
 	CanonicalName     string      `json:"canonical_name"`
 	ExampleDeviations []Deviation `json:"example_deviations,omitempty"`
-	Deviations        []Deviation `json:"deviations,omitempty"`
 }
 
 // Topics fetches topics and deviations from each topic.
@@ -266,7 +303,7 @@ type UserJournalsParams struct {
 	Username string `url:"username"`
 
 	// Fetch only featured or not.
-	Featured bool `url:"featured"`
+	Featured bool `url:"featured,omitempty"`
 }
 
 // UserJournals browses journals of a user.
