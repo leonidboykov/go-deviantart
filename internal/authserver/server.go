@@ -6,47 +6,41 @@ import (
 	"net/http"
 	"net/url"
 
-	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/authhandler"
 )
 
-type AuthServer struct {
-	conf  *oauth2.Config
-	state string
-}
+func AuthHandler(callbackURL string) authhandler.AuthorizationHandler {
+	return func(authCodeURL string) (code string, state string, err error) {
+		fmt.Println("Visit the URL for the auth dialog:", authCodeURL)
 
-func NewAuthServer(conf *oauth2.Config) *AuthServer {
-	return &AuthServer{
-		conf:  conf,
-		state: RandString(32),
-	}
-}
-
-func (a *AuthServer) ListenToken() (string, error) {
-	url, err := url.Parse(a.conf.RedirectURL)
-	if err != nil {
-		return "", fmt.Errorf("unable to parse redirectURL: %w", err)
-	}
-
-	codeChan := make(chan string)
-
-	mux := http.NewServeMux()
-	mux.HandleFunc(url.Path, func(w http.ResponseWriter, r *http.Request) {
-		// TODO: Cleanup code.
-		log.Println("Code:", r.FormValue("code"), "State:", r.FormValue("state"))
-
-		// Auto close a new tab.
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`<script>window.close();</script>`))
-
-		codeChan <- r.FormValue("code")
-	})
-
-	go func() {
-		if err := http.ListenAndServe(url.Host, mux); err != nil {
-			//return "", err
-			log.Fatalln(err)
+		uri, err := url.Parse(callbackURL)
+		if err != nil {
+			return "", "", fmt.Errorf("parse callback url: %w", err)
 		}
-	}()
 
-	return <-codeChan, nil
+		codeChan := make(chan string)
+		stateChan := make(chan string)
+
+		mux := http.NewServeMux()
+		mux.HandleFunc(uri.Path, func(w http.ResponseWriter, r *http.Request) {
+			// TODO: Cleanup code.
+			log.Println("Code:", r.FormValue("code"), "State:", r.FormValue("state"))
+
+			// Auto close a new tab.
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(`<script>window.close();</script>`))
+
+			codeChan <- r.FormValue("code")
+			stateChan <- r.FormValue("state")
+		})
+
+		go func() {
+			if err := http.ListenAndServe(uri.Host, mux); err != nil {
+				log.Fatalln(err)
+			}
+		}()
+
+		// TODO: Stop http server.
+		return <-codeChan, <-stateChan, err
+	}
 }

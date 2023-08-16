@@ -2,10 +2,10 @@ package deviantart
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/dghubble/sling"
 	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/authhandler"
 	"golang.org/x/oauth2/clientcredentials"
 
 	"github.com/leonidboykov/deviantart/internal/authserver"
@@ -51,24 +51,15 @@ func AuthorizationCode(clientID, clientSecret string, scopes []string, callbackU
 		Scopes:      scopes,
 	}
 	return func(s *sling.Sling) error {
-		url := conf.AuthCodeURL("state")
-		fmt.Printf("Visit the URL for the auth dialog: %v", url)
-
-		srv := authserver.NewAuthServer(conf)
-		code, err := srv.ListenToken()
+		tok, err := authhandler.TokenSource(
+			context.Background(),
+			conf,
+			"state", // TODO: This is unsecure.
+			authserver.AuthHandler(callbackURL),
+		).Token()
 		if err != nil {
-			return err
+			return nil
 		}
-		// Use the authorization code that is pushed to the redirect
-		// URL. Exchange will do the handshake to retrieve the
-		// initial access token. The HTTP Client returned by
-		// conf.Client will refresh the token as necessary.
-		tok, err := conf.Exchange(context.Background(), code)
-		if err != nil {
-			return err
-		}
-
-		fmt.Println("Auth Token:", tok.AccessToken)
 
 		s.Client(conf.Client(context.Background(), tok))
 		return nil
