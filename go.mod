@@ -1,6 +1,6 @@
 module github.com/leonidboykov/deviantart
 
-go 1.20
+go 1.21
 
 require (
 	github.com/dghubble/sling v1.4.1
