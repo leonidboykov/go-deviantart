@@ -183,7 +183,7 @@ type DeviationMetadata struct {
 	MatureClassification []string             `json:"mature_classification,omitempty"`
 	Submission           *DeviationSubmission `json:"submission,omitempty"`
 	Stats                *DeviationStats      `json:"stats,omitempty"`
-	Camera               any                  `json:"camera,omitempty"` // TODO: Camera
+	Camera               map[string]string    `json:"camera,omitempty"`
 	Collections          []Folder             `json:"collections,omitempty"`
 	Galleries            []Folder             `json:"galleries,omitempty"`
 	CanPostComments      bool                 `json:"can_post_comments,omitempty"`

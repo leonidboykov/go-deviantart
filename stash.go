@@ -25,22 +25,22 @@ func newStashService(sling *sling.Sling) *stashService {
 }
 
 type StashMetadata struct {
-	Title          string           `json:"title"`
-	Path           string           `json:"path,omitempty"`
-	Size           int              `json:"size,omitempty"`
-	Description    string           `json:"description,omitempty"` // html
-	ParentID       int              `json:"parentid,omitempty"`
-	Thumb          *StashObject     `json:"thumb,omitempty"`
-	ArtistComments string           `json:"artist_comments,omitempty"` //html
-	OriginalURL    string           `json:"original_url,omitempty"`
-	Category       string           `json:"category,omitempty"`
-	CreationTime   int64            `json:"creation_time,omitempty"`
-	Files          []StashObject    `json:"files,omitempty"`
-	Submission     *StashSubmission `json:"submission,omitempty"`
-	Stats          *StashStats      `json:"stats,omitempty"`
-	Camera         any              `json:"camera,omitempty"` // TODO: Camera
-	StackID        int              `json:"stackid"`
-	Tags           []string         `json:"tags,omitempty"`
+	Title          string            `json:"title"`
+	Path           string            `json:"path,omitempty"`
+	Size           int               `json:"size,omitempty"`
+	Description    string            `json:"description,omitempty"` // html
+	ParentID       int               `json:"parentid,omitempty"`
+	Thumb          *StashObject      `json:"thumb,omitempty"`
+	ArtistComments string            `json:"artist_comments,omitempty"` //html
+	OriginalURL    string            `json:"original_url,omitempty"`
+	Category       string            `json:"category,omitempty"`
+	CreationTime   int64             `json:"creation_time,omitempty"`
+	Files          []StashObject     `json:"files,omitempty"`
+	Submission     *StashSubmission  `json:"submission,omitempty"`
+	Stats          *StashStats       `json:"stats,omitempty"`
+	Camera         map[string]string `json:"camera,omitempty"`
+	StackID        int               `json:"stackid"`
+	Tags           []string          `json:"tags,omitempty"`
 }
 
 type StashSubmission struct {
