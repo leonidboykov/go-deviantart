@@ -132,7 +132,7 @@ type CopyDeviationsParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-//   - collection
+//   - collection or gallery
 func (s *foldersService[T]) CopyDeviations(params *CopyDeviationsParams) error {
 	var (
 		success map[string]any
@@ -166,7 +166,7 @@ type CreateFolderParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-//   - collection
+//   - collection or gallery
 func (s *foldersService[T]) Create(params *CreateFolderParams) (Folder, error) {
 	var (
 		success Folder
@@ -198,7 +198,7 @@ type MoveDeviationsParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-//   - collection
+//   - collection or gallery
 func (s *foldersService[T]) MoveDeviations(params *MoveDeviationsParams) error {
 	var (
 		failure Error
@@ -218,7 +218,7 @@ func (s *foldersService[T]) MoveDeviations(params *MoveDeviationsParams) error {
 // The following scopes are required to access this resource:
 //
 //   - browse
-//   - collection
+//   - collection or gallery
 func (s *foldersService[T]) Remove(folderID uuid.UUID) error {
 	var (
 		failure Error
@@ -246,7 +246,7 @@ type RemoveDeviationsParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-//   - collection
+//   - collection or gallery
 func (s *foldersService[T]) RemoveDeviations(params *RemoveDeviationsParams) error {
 	var (
 		failure Error
@@ -280,7 +280,7 @@ type UpdateFoldersParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-//   - collection
+//   - collection or gallery
 func (s *foldersService[T]) Update(params *UpdateFoldersParams) error {
 	var (
 		failure Error
@@ -311,7 +311,7 @@ type UpdateDeviationOrderParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-//   - collection
+//   - collection or gallery
 func (s *foldersService[T]) UpdateDeviationOrder(params *UpdateDeviationOrderParams) error {
 	var (
 		failure Error
@@ -339,7 +339,7 @@ type UpdateOrderParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-//   - collection
+//   - collection or gallery
 func (s *foldersService[T]) UpdateOrder(params *UpdateOrderParams) error {
 	var (
 		failure Error

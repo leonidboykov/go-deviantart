@@ -33,6 +33,13 @@ type CreateJournalParams struct {
 }
 
 // CreateJournal creates journal.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - user.manage
 func (s *deviationService) CreateJournal(params *CreateJournalParams) (uuid.UUID, error) {
 	var (
 		success map[string]uuid.UUID
@@ -68,6 +75,17 @@ type UpdateJournalParams struct {
 	LicenseOptions LicenseOptions `url:"license_options,omitempty"`
 }
 
+// UpdateJournal updates journal. All values left empty, except cover image
+// deviation id, will have the corresponding fields cleared. To keep a field
+// value send the old one. To clear cover image deviation id value - pass
+// `reset_cover_image_deviation_id` param with value `true`.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - user.manage
 func (s *deviationService) UpdateJournal(deviationID uuid.UUID, params *UpdateJournalParams) (DeviationUpdateResponse, error) {
 	var (
 		success DeviationUpdateResponse

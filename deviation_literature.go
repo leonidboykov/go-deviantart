@@ -41,7 +41,14 @@ type CreateLiteratureParams struct {
 	EmbeddedImageDeviationID string `url:"embedded_image_deviation_id,omitempty"`
 }
 
-// CreateJournal creates literature.
+// CreateLiterature creates literature.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - user.manage
 func (s *deviationService) CreateLiterature(params *CreateLiteratureParams) (uuid.UUID, error) {
 	var (
 		success map[string]uuid.UUID
@@ -80,6 +87,15 @@ type UpdateLiteratureParams struct {
 	LicenseOptions []LicenseOptions `url:"license_options"`
 }
 
+// UpdateLiterature updates literature. Note: null/empty values will have the
+// corresponding fields cleared. To keep a field value send the old one.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - user.manage
 func (s *deviationService) UpdateLiterature(deviationID uuid.UUID, params *UpdateLiteratureParams) (DeviationUpdateResponse, error) {
 	var (
 		success DeviationUpdateResponse

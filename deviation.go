@@ -115,6 +115,13 @@ type DeviationUpdateResponse struct {
 }
 
 // Deviation fetches a deviation.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *deviationService) Deviation(deviationID uuid.UUID) (Deviation, error) {
 	var (
 		success Deviation
@@ -140,6 +147,13 @@ type Content struct {
 // The endpoint works with journals and literatures. Deviation objects returned
 // from API contain only excerpt of a journal, use this endpoint to load full
 // content. Any custom CSS rules and fonts applied to journal are also returned.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *deviationService) Content(deviationID uuid.UUID) (Content, error) {
 	var (
 		success Content
@@ -149,6 +163,85 @@ func (s *deviationService) Content(deviationID uuid.UUID) (Content, error) {
 	_, err := s.sling.New().Get("content/").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return Content{}, fmt.Errorf("unable to fetch deviation content: %w", err)
+	}
+	return success, nil
+}
+
+type DownloadResponse struct {
+	Src      string `json:"src"`
+	FileName string `json:"filename"`
+	Width    uint32 `json:"width"`
+	Height   uint32 `json:"height"`
+	FileSize uint32 `json:"filesize"`
+}
+
+// Download fetches the original file download (if allowed).
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+func (s *deviationService) Download(deviationID uuid.UUID) (DownloadResponse, error) {
+	var (
+		success DownloadResponse
+		failure Error
+	)
+	_, err := s.sling.New().Get(deviationID.String()).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return DownloadResponse{}, fmt.Errorf("unable to fetch download data: %w", err)
+	}
+	return success, nil
+}
+
+type EditDeviationParams struct {
+	// Title.
+	Title string `url:"title,omitempty"`
+
+	// Submission is mature or not.
+	IsMature bool `url:"is_mature"`
+
+	// The mature level of the submission, required for mature submissions.
+	MatureLevel string `url:"mature_level,omitempty"`
+
+	// The mature classification of the submission.
+	MatureClassification []string `url:"mature_classification,brackets,omitempty"`
+
+	// Allow comments on the submission. Default: true.
+	AllowComments bool `url:"allow_comments,omitempty"`
+
+	// License options.
+	LicenseOptions LicenseOptions `url:"license_options,omitempty"`
+
+	// UUIDs of gallery folders to publish this submission to.
+	GalleryIDs []string `url:"galleryids,omitempty"`
+
+	// Offer original file as a free download.
+	AllowFreeDownload bool `url:"allow_free_download,omitempty"`
+
+	// Add watermark. Available only if display_resolution is present.
+	AddWatermark bool `url:"add_watermark,omitempty"`
+}
+
+// Edit edits deviation. Note: null/empty values will have the corresponding
+// fields cleared. To keep a field value send the old one.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
+//   - publish
+func (s *deviationService) Edit(deviationID uuid.UUID, params *EditDeviationParams) (DeviationUpdateResponse, error) {
+	var (
+		success DeviationUpdateResponse
+		failure Error
+	)
+	_, err := s.sling.New().Get("edit/").Path(deviationID.String()).BodyForm(params).Receive(success, failure)
+	if err := relevantError(err, failure); err != nil {
+		return DeviationUpdateResponse{}, fmt.Errorf("unable to edit deviation: %w", err)
 	}
 	return success, nil
 }
@@ -165,6 +258,13 @@ type EmbeddedContentParams struct {
 //
 // Journal and literature deviations support embedding of deviations inside
 // them.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *deviationService) EmbeddedContent(params *EmbeddedContentParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
@@ -246,6 +346,13 @@ type MetadataParams struct {
 //
 // This endpoint is limited to 50 deviations per query when fetching the base
 // data and 10 when fetching extended data.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *deviationService) Metadata(params *MetadataParams) (MetadataResponse, error) {
 	var (
 		success MetadataResponse
@@ -264,6 +371,13 @@ type FaveInfo struct {
 }
 
 // WhoFaved fetches a list of users who faved the deviation.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *deviationService) WhoFaved(deviationID uuid.UUID, page *OffsetParams) (OffsetResponse[FaveInfo], error) {
 	var (
 		success OffsetResponse[FaveInfo]

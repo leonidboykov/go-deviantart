@@ -30,12 +30,14 @@ func ClientCredentials(clientID, clientSecret string) Authenticator {
 
 const (
 	BasicScope       = "basic"
-	BrowseScope      = "browse"
 	BrowseMLTScope   = "browse.mlt"
+	BrowseScope      = "browse"
 	CollectionScope  = "collection"
 	CommentPostScope = "comment.post"
+	GalleryScope     = "gallery"
 	PublishScope     = "publish"
 	StashScope       = "stash"
+	UserManageScope  = "user.manage"
 	UserScope        = "user"
 )
 
