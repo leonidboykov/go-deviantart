@@ -54,6 +54,13 @@ type DeleteMessageParams struct {
 }
 
 // Delete deletes a message or a message stack.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - message
 func (s *messagesService) Delete(params *DeleteMessageParams) error {
 	var (
 		failure Error
@@ -89,6 +96,13 @@ type MessagesFeed struct {
 // mode similar messages will be grouped together and the most recent one will
 // be returned. stackid can be used to fetch the rest of the messages in the
 // stack.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - message
 func (s *messagesService) Feed(params *MessagesFeedParams) (MessagesFeed, error) {
 	var (
 		success MessagesFeed
@@ -126,6 +140,13 @@ type MessagesFeedbackParams struct {
 // mode similar messages will be grouped together and the most recent one will
 // be returned. stackid can be used to fetch the rest of the messages in the
 // stack.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - message
 func (s *messagesService) Feedback(params *MessagesFeedbackParams) (MessagesFeed, error) {
 	var (
 		success MessagesFeed
@@ -149,6 +170,13 @@ type StackFeedbackParams struct {
 }
 
 // Fetch messages in a stack.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - message
 func (s *messagesService) StackFeedback(stackID string, params *StackFeedbackParams) (MessagesFeed, error) {
 	var (
 		success MessagesFeed
@@ -190,6 +218,13 @@ type MessagesMentions struct {
 // mode similar messages will be grouped together and the most recent one will
 // be returned. stackid can be used to fetch the rest of the messages in the
 // stack.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - message
 func (s *messagesService) Mentions(params *MessagesMentionsParams) (MessagesMentions, error) {
 	var (
 		success MessagesMentions
@@ -203,6 +238,13 @@ func (s *messagesService) Mentions(params *MessagesMentionsParams) (MessagesMent
 }
 
 // StackMentions fetches messages in a stack.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - message
 func (s *messagesService) StackMentions(stackID string, params *StackFeedbackParams) (MessagesMentions, error) {
 	var (
 		success MessagesMentions

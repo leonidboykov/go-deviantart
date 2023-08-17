@@ -35,6 +35,7 @@ const (
 	CollectionScope  = "collection"
 	CommentPostScope = "comment.post"
 	GalleryScope     = "gallery"
+	MessageScope     = "message"
 	PublishScope     = "publish"
 	StashScope       = "stash"
 	UserManageScope  = "user.manage"
