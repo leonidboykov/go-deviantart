@@ -25,6 +25,9 @@ type DailyDeviationsParams struct {
 
 // DailyDeviations fetches daily deviations.
 //
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
 // The following scopes are required to access this resource:
 //
 //   - browse
@@ -45,6 +48,9 @@ func (s *browseService) DailyDeviations(params *DailyDeviationsParams) (OffsetRe
 
 // DeviantsYouWatch fetches deviations of deviants you watch.
 //
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
 // The following scopes are required to access this resource:
 //
 //   - browse
@@ -64,7 +70,7 @@ type MoreLikeThisPreviewResponse struct {
 	Seed                 uuid.UUID   `json:"seed"`
 	Author               User        `json:"user"`
 	MoreFromArtist       []Deviation `json:"more_from_artist"`
-	MoreFromDA           []Deviation `json:"more_from_da"`
+	MoreFromDeviantArt   []Deviation `json:"more_from_da"`
 	SuggestedCollections []struct {
 		Collection Folder      `json:"collection"` //Gallection
 		Deviations []Deviation `json:"deviations"`
@@ -72,6 +78,9 @@ type MoreLikeThisPreviewResponse struct {
 }
 
 // MoreLikeThisPreview fetches More Like This preview result for a seed deviation.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
 //
@@ -100,6 +109,9 @@ type SearchParams struct {
 }
 
 // Newest fetches newest deviations.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
 //
@@ -137,6 +149,9 @@ type PopularParams struct {
 
 // Popular fetches popular deviations.
 //
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
 // The following scopes are required to access this resource:
 //
 //   - browse
@@ -162,6 +177,9 @@ type JournalStatus struct {
 
 // PostsDeviantsYouWatch returns deviants you watch.
 //
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
 // The following scopes are required to access this resource:
 //
 //   - browse
@@ -178,6 +196,9 @@ func (s *browseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetRespons
 }
 
 // Recommended fetches recommended deviations.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
 //
 // The following scopes are required to access this resource:
 //
@@ -198,6 +219,13 @@ func (s *browseService) Recommended(params *SearchParams) (OffsetResponse[Deviat
 }
 
 // Tags fetches a tag.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 //
 // NOTE: This endpoint supports cursor- and offset-base pagination.
 // But for simplicity, I'll stick to cursor params for now.
@@ -220,6 +248,13 @@ func (s *browseService) Tags(tag string, page *CursorParams) (CursorResponse[Dev
 //
 // The `tag_name“ parameter should not contain spaces. If it does, spaces will
 // be stripped and remainder will be treated as a single tag.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *browseService) TagsSearch(tag string) ([]string, error) {
 	type tagName struct {
 		Name string `json:"tag_name" url:"tag_name"`
@@ -241,6 +276,9 @@ func (s *browseService) TagsSearch(tag string) ([]string, error) {
 }
 
 // Topic fetches topic deviations.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
 //
@@ -267,6 +305,13 @@ type Topic struct {
 }
 
 // Topics fetches topics and deviations from each topic.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *browseService) Topics(page *CursorParams) (CursorResponse[Topic], error) {
 	var (
 		success CursorResponse[Topic]
@@ -286,6 +331,13 @@ type TopTopic struct {
 }
 
 // Topics fetches top topics with example deviation for each one.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *browseService) TopTopics(page *CursorParams) (CursorResponse[TopTopic], error) {
 	var (
 		success CursorResponse[TopTopic]
@@ -307,6 +359,13 @@ type UserJournalsParams struct {
 }
 
 // UserJournals browses journals of a user.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *browseService) UserJournals(params *UserJournalsParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]

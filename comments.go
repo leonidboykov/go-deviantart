@@ -17,6 +17,13 @@ func newCommentsService(sling *sling.Sling) *commentsService {
 	}
 }
 
+const (
+	HiddenByOwner     = "hidden_by_owner"
+	HiddenByAdmin     = "hidden_by_admin"
+	HiddenByCommenter = "hidden_by_commenter"
+	HiddenAsSpam      = "hidden_as_spam"
+)
+
 type Comment struct {
 	CommentID   uuid.UUID `json:"commentid"`
 	ParentID    uuid.UUID `json:"parentid"`
@@ -27,14 +34,14 @@ type Comment struct {
 	IsFeatured  bool      `json:"is_featured"`
 	Likes       int       `json:"likes"`
 	User        User      `json:"user,omitempty"`
-	TextContent any       `json:"text_content,omitempty"`
+	TextContent any       `json:"text_content,omitempty"` // TODO: TextContent
 
 	// The hidden field will be null when the comment is not hidden and one of
 	// the following values when it is:
-	// - `hidden_by_owner` - The comment was hidden by the owner of the item
-	// - `hidden_by_admin` - The comment was hidden by an administrator
-	// - `hidden_by_commenter` - The comment was by the comment owner
-	// - `hidden_as_spam` - The comment was hidden because it was marked spam
+	//   - `hidden_by_owner` - The comment was hidden by the owner of the item
+	//   - `hidden_by_admin` - The comment was hidden by an administrator
+	//   - `hidden_by_commenter` - The comment was by the comment owner
+	//   - `hidden_as_spam` - The comment was hidden because it was marked spam
 	Hidden string `json:"hidden"`
 }
 
@@ -64,6 +71,13 @@ type CommentSiblings struct {
 }
 
 // CommentSiblings fetches siblings of a comment.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *commentsService) CommentSiblings(commentID uuid.UUID, params *CommentSiblingsParams) (CommentSiblings, error) {
 	var (
 		success CommentSiblings
@@ -100,6 +114,13 @@ type CommentsResponse struct {
 }
 
 // DeviationComments fetch comments posted on deviation.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *commentsService) DeviationComments(deviationID uuid.UUID, params *FetchCommentsParams) (CommentsResponse, error) {
 	var (
 		success CommentsResponse
@@ -112,6 +133,14 @@ func (s *commentsService) DeviationComments(deviationID uuid.UUID, params *Fetch
 	return success, nil
 }
 
+// ProfileComments fetch comments posted on user profile.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *commentsService) ProfileComments(username string, params *FetchCommentsParams) (CommentsResponse, error) {
 	var (
 		success CommentsResponse
@@ -125,6 +154,13 @@ func (s *commentsService) ProfileComments(username string, params *FetchComments
 }
 
 // StatusComments fetch comments posted on status.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *commentsService) StatusComments(statusID uuid.UUID, params *FetchCommentsParams) (CommentsResponse, error) {
 	var (
 		success CommentsResponse
@@ -146,6 +182,14 @@ type CommentParams struct {
 }
 
 // CommentDeviation posts a comment on a deviation.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - comment.post
 func (s *commentsService) CommentDeviation(deviationID uuid.UUID, params *CommentParams) (Comment, error) {
 	var (
 		success Comment
@@ -159,6 +203,14 @@ func (s *commentsService) CommentDeviation(deviationID uuid.UUID, params *Commen
 }
 
 // CommentProfile posts a comment on a users profile.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - comment.post
 func (s *commentsService) CommentProfile(username string, params *CommentParams) (Comment, error) {
 	var (
 		success Comment
@@ -172,6 +224,14 @@ func (s *commentsService) CommentProfile(username string, params *CommentParams)
 }
 
 // CommentStatus posts a comment on a status.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - comment.post
 func (s *commentsService) CommentStatus(statusID uuid.UUID, params *CommentParams) (Comment, error) {
 	var (
 		success Comment

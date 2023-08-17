@@ -95,7 +95,7 @@ type DeviationTier struct {
 		Posts       uint32 `json:"posts,omitempty"`
 		Total       uint32 `json:"total,omitempty"`
 	} `json:"stats"`
-	Benefits []any `json:"benefits"`
+	Benefits []any `json:"benefits"` // TODO: Benefits
 }
 
 type DeviationUpdateResponse struct {
@@ -183,7 +183,7 @@ type DeviationMetadata struct {
 	MatureClassification []string             `json:"mature_classification,omitempty"`
 	Submission           *DeviationSubmission `json:"submission,omitempty"`
 	Stats                *DeviationStats      `json:"stats,omitempty"`
-	Camera               any                  `json:"camera,omitempty"`
+	Camera               any                  `json:"camera,omitempty"` // TODO: Camera
 	Collections          []Folder             `json:"collections,omitempty"`
 	Galleries            []Folder             `json:"galleries,omitempty"`
 	CanPostComments      bool                 `json:"can_post_comments,omitempty"`

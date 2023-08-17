@@ -38,7 +38,7 @@ type StashMetadata struct {
 	Files          []StashObject    `json:"files,omitempty"`
 	Submission     *StashSubmission `json:"submission,omitempty"`
 	Stats          *StashStats      `json:"stats,omitempty"`
-	Camera         any              `json:"camera,omitempty"`
+	Camera         any              `json:"camera,omitempty"` // TODO: Camera
 	StackID        int              `json:"stackid"`
 	Tags           []string         `json:"tags,omitempty"`
 }

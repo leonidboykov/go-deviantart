@@ -55,6 +55,9 @@ type FolderContent struct {
 
 // Folder fetches folder contents.
 //
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
 // The following scopes are required to access this resource:
 //
 //   - browse
@@ -74,7 +77,14 @@ type UsernameParams struct {
 	Username string `url:"username,omitempty"`
 }
 
-// // All gets the "all" view of a users collection/gallery.
+// All gets the "all" view of a users collection/gallery.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *foldersService[T]) All(params *UsernameParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
@@ -88,6 +98,15 @@ func (s *foldersService[T]) All(params *UsernameParams) (OffsetResponse[Deviatio
 }
 
 // Folders fetches collection folders.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//
+// TODO: Support `ext_preload` for collections.
 func (s *foldersService[T]) Folders(params *UsernameParams, page *OffsetParams) (OffsetResponse[T], error) {
 	var (
 		success OffsetResponse[T]
@@ -107,7 +126,13 @@ type CopyDeviationsParams struct {
 
 // CopyDeviations copies a list of deviations to a folder destination.
 //
-// Requires Authorization Code grant.
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - collection
 func (s *foldersService[T]) CopyDeviations(params *CopyDeviationsParams) error {
 	var (
 		success map[string]any
@@ -135,7 +160,13 @@ type CreateFolderParams struct {
 
 // Creates new collection folder.
 //
-// Requires Authorization Code grant.
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - collection
 func (s *foldersService[T]) Create(params *CreateFolderParams) (Folder, error) {
 	var (
 		success Folder
@@ -160,6 +191,14 @@ type MoveDeviationsParams struct {
 }
 
 // MoveDeviations moves a list of deviations to a folder destination.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - collection
 func (s *foldersService[T]) MoveDeviations(params *MoveDeviationsParams) error {
 	var (
 		failure Error
@@ -173,7 +212,13 @@ func (s *foldersService[T]) MoveDeviations(params *MoveDeviationsParams) error {
 
 // Remove deletes collection folder.
 //
-// Requires Authorization Code grant.
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - collection
 func (s *foldersService[T]) Remove(folderID uuid.UUID) error {
 	var (
 		failure Error
@@ -194,6 +239,14 @@ type RemoveDeviationsParams struct {
 }
 
 // RemoveDeviations removes a list of deviations from a gallery folder.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - collection
 func (s *foldersService[T]) RemoveDeviations(params *RemoveDeviationsParams) error {
 	var (
 		failure Error
@@ -220,6 +273,14 @@ type UpdateFoldersParams struct {
 }
 
 // Update updates folder.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - collection
 func (s *foldersService[T]) Update(params *UpdateFoldersParams) error {
 	var (
 		failure Error
@@ -243,6 +304,14 @@ type UpdateDeviationOrderParams struct {
 }
 
 // UpdateDeviationOrder updates order of deviation in folder.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - collection
 func (s *foldersService[T]) UpdateDeviationOrder(params *UpdateDeviationOrderParams) error {
 	var (
 		failure Error
@@ -263,6 +332,14 @@ type UpdateOrderParams struct {
 }
 
 // UpdateOrder rearranges the position of folders.
+//
+// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
+//   - collection
 func (s *foldersService[T]) UpdateOrder(params *UpdateOrderParams) error {
 	var (
 		failure Error
