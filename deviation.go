@@ -64,20 +64,30 @@ type Deviation struct {
 		Giver     User   `json:"giver"`
 		Suggester User   `json:"suggester,omitempty"`
 	} `json:"daily_deviation,omitempty"`
-	PremiumFolderData any        `json:"premium_folder_data,omitempty"` // TODO: premium folder data.
-	TextContent       any        `json:"text_content,omitempty"`        // TODO: editor object.
-	IsPinned          bool       `json:"is_pinned,omitempty"`
-	CoverImage        *Deviation `json:"cover_image,omitempty"`
-	TierAccess        string     `json:"tier_access,omitempty"`
-	PrimaryTier       *Deviation `json:"primary_tier,omitempty"`
-	Excerpt           string     `json:"excerpt,omitempty"`
-	IsMature          bool       `json:"is_mature,omitempty"`
-	IsDownloadable    bool       `json:"is_downloadable,omitempty"`
-	DownloadFileSize  uint32     `json:"download_filesize,omitempty"`
+	PremiumFolderData *PremiumFolderData `json:"premium_folder_data,omitempty"`
+	TextContent       *EditorText        `json:"text_content,omitempty"`
+	IsPinned          bool               `json:"is_pinned,omitempty"`
+	CoverImage        *Deviation         `json:"cover_image,omitempty"`
+	TierAccess        string             `json:"tier_access,omitempty"`
+	PrimaryTier       *Deviation         `json:"primary_tier,omitempty"`
+	Excerpt           string             `json:"excerpt,omitempty"`
+	IsMature          bool               `json:"is_mature,omitempty"`
+	IsDownloadable    bool               `json:"is_downloadable,omitempty"`
+	DownloadFileSize  uint32             `json:"download_filesize,omitempty"`
 	MotionBook        struct {
 		EmbedURL string `json:"embed_url,omitempty"`
 	} `json:"motion_book,omitempty"`
 	SuggestedReasons []any `json:"suggested_reasons,omitempty"`
+}
+
+type PremiumFolderData struct {
+	Type           string    `json:"type"`
+	HasAccess      bool      `json:"has_access"`
+	GalleryID      uuid.UUID `json:"gallery_id"`
+	PointsPrice    int       `json:"points_price,omitempty"`
+	DollarPrice    float64   `json:"dollar_price,omitempty"` // TODO: DeviationTier has the same string field.
+	NumSubscribers int       `json:"num_subscribers,omitempty"`
+	SubproductID   int       `json:"subproductid,omitempty"` // TODO: Is it really an integer field and not an UUID?
 }
 
 type DeviationTier struct {
@@ -85,7 +95,7 @@ type DeviationTier struct {
 	IsUserSubscribed bool   `json:"is_user_subscribed,omitempty"`
 	CanUserSubscribe bool   `json:"can_user_subscribe,omitempty"`
 	SubproductID     uint64 `json:"subproductid,omitempty"`
-	DollarPrice      string `json:"dollar_price,omitempty"`
+	DollarPrice      string `json:"dollar_price,omitempty"` // TODO: PremiumFolderData has the same float field.
 	Settings         struct {
 		AccessSettings string `json:"access_settings"` // TODO: enum[all,future_only,limited_past_and_future]
 	} `json:"settings,omitempty"`
@@ -95,7 +105,7 @@ type DeviationTier struct {
 		Posts       uint32 `json:"posts,omitempty"`
 		Total       uint32 `json:"total,omitempty"`
 	} `json:"stats"`
-	Benefits []any `json:"benefits"` // TODO: Benefits
+	Benefits []string `json:"benefits"`
 }
 
 type DeviationUpdateResponse struct {

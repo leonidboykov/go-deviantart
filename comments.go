@@ -25,16 +25,16 @@ const (
 )
 
 type Comment struct {
-	CommentID   uuid.UUID `json:"commentid"`
-	ParentID    uuid.UUID `json:"parentid"`
-	Posted      string    `json:"posted"`
-	Replies     int       `json:"replies"`
-	Body        string    `json:"body"`
-	IsLiked     bool      `json:"is_liked"`
-	IsFeatured  bool      `json:"is_featured"`
-	Likes       int       `json:"likes"`
-	User        User      `json:"user,omitempty"`
-	TextContent any       `json:"text_content,omitempty"` // TODO: TextContent
+	CommentID   uuid.UUID   `json:"commentid"`
+	ParentID    uuid.UUID   `json:"parentid"`
+	Posted      string      `json:"posted"`
+	Replies     int         `json:"replies"`
+	Body        string      `json:"body"`
+	IsLiked     bool        `json:"is_liked"`
+	IsFeatured  bool        `json:"is_featured"`
+	Likes       int         `json:"likes"`
+	User        User        `json:"user,omitempty"`
+	TextContent *EditorText `json:"text_content,omitempty"`
 
 	// The hidden field will be null when the comment is not hidden and one of
 	// the following values when it is:
@@ -43,6 +43,15 @@ type Comment struct {
 	//   - `hidden_by_commenter` - The comment was by the comment owner
 	//   - `hidden_as_spam` - The comment was hidden because it was marked spam
 	Hidden string `json:"hidden"`
+}
+
+type EditorText struct {
+	Excerpt string `json:"excerpt"`
+	Body    struct {
+		Type     string `json:"type"`
+		Markup   string `json:"markup,omitempty"`
+		Features string `json:"features"`
+	} `json:"body"`
 }
 
 type CommentSiblingsParams struct {
