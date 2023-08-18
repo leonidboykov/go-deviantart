@@ -36,6 +36,7 @@ type CursorResponse[T any] struct {
 	Session    *Session `json:"session,omitempty"`
 }
 
+// singleResponse represents response without pagination.
 type singleResponse[T any] struct {
 	Results []T `json:"results"`
 }

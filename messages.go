@@ -83,13 +83,6 @@ type MessagesFeedParams struct {
 	WithSession bool   `url:"with_session,omitempty"`
 }
 
-type MessagesFeed struct {
-	HasMore bool      `json:"has_more"`
-	Cursor  string    `json:"cursor"`
-	Results []Message `json:"results"`
-	Session *Session  `json:"session,omitempty"`
-}
-
 // Feed fetches feed of all messages.
 //
 // Messages can be fetched in a stacked (default) or flat mode. In the stacked
@@ -103,14 +96,14 @@ type MessagesFeed struct {
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) Feed(params *MessagesFeedParams) (MessagesFeed, error) {
+func (s *messagesService) Feed(params *MessagesFeedParams) (CursorResponse[Message], error) {
 	var (
-		success MessagesFeed
+		success CursorResponse[Message]
 		failure Error
 	)
 	_, err := s.sling.New().Get("feed").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return MessagesFeed{}, fmt.Errorf("unable to fetch message feed: %w", err)
+		return CursorResponse[Message]{}, fmt.Errorf("unable to fetch message feed: %w", err)
 	}
 	return success, nil
 }
@@ -147,26 +140,16 @@ type MessagesFeedbackParams struct {
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) Feedback(params *MessagesFeedbackParams) (MessagesFeed, error) {
+func (s *messagesService) Feedback(params *MessagesFeedbackParams) (CursorResponse[Message], error) {
 	var (
-		success MessagesFeed
+		success CursorResponse[Message]
 		failure Error
 	)
 	_, err := s.sling.New().Get("feedback").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return MessagesFeed{}, fmt.Errorf("unable to fetch message feedback: %w", err)
+		return CursorResponse[Message]{}, fmt.Errorf("unable to fetch message feedback: %w", err)
 	}
 	return success, nil
-}
-
-type StackFeedbackParams struct {
-	// The pagination offset.
-	Offset int `url:"offset,omitempty"`
-
-	// The pagination limit.
-	Limit int `url:"limit,omitempty"`
-
-	WithSession bool `url:"with_session,omitempty"`
 }
 
 // Fetch messages in a stack.
@@ -177,14 +160,14 @@ type StackFeedbackParams struct {
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) StackFeedback(stackID string, params *StackFeedbackParams) (MessagesFeed, error) {
+func (s *messagesService) StackFeedback(stackID string, page *OffsetParams) (CursorResponse[Message], error) {
 	var (
-		success MessagesFeed
+		success CursorResponse[Message]
 		failure Error
 	)
-	_, err := s.sling.New().Get("feedback").Path(stackID).QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("feedback").Path(stackID).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return MessagesFeed{}, fmt.Errorf("unable to fetch stack feedback: %w", err)
+		return CursorResponse[Message]{}, fmt.Errorf("unable to fetch stack feedback: %w", err)
 	}
 	return success, nil
 }
@@ -205,13 +188,6 @@ type MessagesMentionsParams struct {
 	WithSession bool `url:"with_session,omitempty"`
 }
 
-type MessagesMentions struct {
-	HasMore    bool      `json:"has_more"`
-	NextOffset string    `json:"cursor"`
-	Results    []Message `json:"results"`
-	Session    *Session  `json:"session,omitempty"`
-}
-
 // Mentions fetches mention messages.
 //
 // Messages can be fetched in a stacked (default) or flat mode. In the stacked
@@ -225,14 +201,14 @@ type MessagesMentions struct {
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) Mentions(params *MessagesMentionsParams) (MessagesMentions, error) {
+func (s *messagesService) Mentions(params *MessagesMentionsParams) (OffsetResponse[Message], error) {
 	var (
-		success MessagesMentions
+		success OffsetResponse[Message]
 		failure Error
 	)
 	_, err := s.sling.New().Get("mentions").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return MessagesMentions{}, fmt.Errorf("unable to fetch message mentions: %w", err)
+		return OffsetResponse[Message]{}, fmt.Errorf("unable to fetch message mentions: %w", err)
 	}
 	return success, nil
 }
@@ -245,14 +221,14 @@ func (s *messagesService) Mentions(params *MessagesMentionsParams) (MessagesMent
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) StackMentions(stackID string, params *StackFeedbackParams) (MessagesMentions, error) {
+func (s *messagesService) StackMentions(stackID string, page *OffsetParams) (OffsetResponse[Message], error) {
 	var (
-		success MessagesMentions
+		success OffsetResponse[Message]
 		failure Error
 	)
-	_, err := s.sling.New().Get("mentions/").Path(stackID).QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("mentions/").Path(stackID).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return MessagesMentions{}, fmt.Errorf("unable to fetch stack mentions: %w", err)
+		return OffsetResponse[Message]{}, fmt.Errorf("unable to fetch stack mentions: %w", err)
 	}
 	return success, nil
 }

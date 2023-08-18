@@ -41,23 +41,19 @@ type Deviation struct {
 	PublishedTime  string        `json:"published_time,omitempty"`
 	AllowsComments bool          `json:"allows_comments,omitempty"`
 	Tier           DeviationTier `json:"tier,omitempty"`
-	Preview        StashObject   `json:"preview,omitempty"`
+	Preview        StashFile     `json:"preview,omitempty"`
 	Content        struct {
-		StashObject
+		StashFile
 		FileSize uint32 `json:"filesize"`
 	} `json:"content,omitempty"`
-	Thumbs []StashObject `json:"thumbs"`
+	Thumbs []StashFile `json:"thumbs"`
 	Videos []struct {
 		Src      string `json:"src"`
 		Quality  string `json:"quality"`
 		FileSize uint32 `json:"filesize"`
 		Duration uint32 `json:"duration"`
 	} `json:"videos,omitempty"`
-	Flash []struct {
-		Src    string `json:"src"`
-		Height uint32 `json:"height"`
-		Width  uint32 `json:"width"`
-	} `json:"flash,omitempty"`
+	Flash          []fileInfo `json:"flash,omitempty"`
 	DailyDeviation struct {
 		Body      string `json:"body"`
 		Time      string `json:"time"`
@@ -109,7 +105,7 @@ type DeviationTier struct {
 }
 
 type DeviationUpdateResponse struct {
-	Status      string    `json:"status"`
+	StatusResponse
 	URL         string    `json:"url"`
 	DeviationID uuid.UUID `json:"deviationid"`
 }
@@ -168,10 +164,8 @@ func (s *deviationService) Content(deviationID uuid.UUID) (Content, error) {
 }
 
 type DownloadResponse struct {
-	Src      string `json:"src"`
+	fileInfo
 	FileName string `json:"filename"`
-	Width    uint32 `json:"width"`
-	Height   uint32 `json:"height"`
 	FileSize uint32 `json:"filesize"`
 }
 

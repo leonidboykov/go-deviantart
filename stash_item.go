@@ -6,7 +6,7 @@ import (
 )
 
 type StashItem struct {
-	ItemID   int      `json:"itemid"`
+	ItemID   int64    `json:"itemid"`
 	HTML     string   `json:"html,omitempty"`
 	CSS      string   `json:"css,omitempty"`
 	CSSFonts []string `json:"css_fonts,omitempty"`

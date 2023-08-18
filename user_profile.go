@@ -46,7 +46,7 @@ type Profile struct {
 		Parent   uuid.UUID `json:"parent,omitempty"`
 		Name     string    `json:"name"`
 	} `json:"galleries,omitempty"`
-	Session Session `json:"session,omitempty"`
+	Session *Session `json:"session,omitempty"`
 }
 
 type GetProfileParams struct {

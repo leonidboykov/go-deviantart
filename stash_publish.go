@@ -87,7 +87,7 @@ type StashPublishParams struct {
 }
 
 type StashPublishResponse struct {
-	Status      bool      `json:"status"`
+	StatusResponse
 	URL         string    `json:"url"`
 	DeviationID uuid.UUID `json:"deviationid"`
 }

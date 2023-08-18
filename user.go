@@ -75,10 +75,6 @@ func newUserService(sling *sling.Sling) *userService {
 	}
 }
 
-type damntokenResponse struct {
-	DAmnToken string `json:"damntoken"`
-}
-
 // DAmnToken retrieves the dAmn auth token required to connect to the dAmn servers.
 //
 // To connect to this endpoint OAuth2 Access Token from the Authorization Code
@@ -89,14 +85,14 @@ type damntokenResponse struct {
 //   - user
 func (s *userService) DAmnToken() (string, error) {
 	var (
-		success damntokenResponse
+		success map[string]any
 		failure Error
 	)
 	_, err := s.sling.New().Get("damntoken").Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return "", fmt.Errorf("unable to fetch dAmn token: %w", err)
 	}
-	return success.DAmnToken, nil
+	return success["damntoken"].(string), nil
 }
 
 // Tiers fetches users tiers.

@@ -7,11 +7,15 @@ import (
 	"github.com/dghubble/sling"
 )
 
-type StashObject struct {
-	Src          string `json:"src"`
-	Height       int    `json:"height"`
-	Width        int    `json:"width"`
-	Transparency bool   `json:"transparency"`
+type fileInfo struct {
+	Source string `json:"src"`
+	Height int    `json:"height"`
+	Width  int    `json:"width"`
+}
+
+type StashFile struct {
+	fileInfo
+	Transparency bool `json:"transparency"`
 }
 
 type stashService struct {
@@ -30,12 +34,12 @@ type StashMetadata struct {
 	Size           int               `json:"size,omitempty"`
 	Description    string            `json:"description,omitempty"` // html
 	ParentID       int               `json:"parentid,omitempty"`
-	Thumb          *StashObject      `json:"thumb,omitempty"`
+	Thumb          *StashFile        `json:"thumb,omitempty"`
 	ArtistComments string            `json:"artist_comments,omitempty"` //html
 	OriginalURL    string            `json:"original_url,omitempty"`
 	Category       string            `json:"category,omitempty"`
 	CreationTime   int64             `json:"creation_time,omitempty"`
-	Files          []StashObject     `json:"files,omitempty"`
+	Files          []StashFile       `json:"files,omitempty"`
 	Submission     *StashSubmission  `json:"submission,omitempty"`
 	Stats          *StashStats       `json:"stats,omitempty"`
 	Camera         map[string]string `json:"camera,omitempty"`
@@ -79,18 +83,13 @@ func (s *stashService) Stack(stackID int64) (StashMetadata, error) {
 	return success, nil
 }
 
-type StackContents struct {
-	Results    []StashMetadata `json:"results"`
-	HasMore    bool            `json:"has_more"`
-	NextOffset int32           `json:"next_offset,omitempty"`
-}
-
 type StackContentsParams struct {
-	Offset            uint16 `url:"offset,omitempty"`
-	Limit             uint8  `url:"limit,omitempty"`
-	IncludeSubmission bool   `url:"ext_submission,omitempty"`
-	IncludeCamera     bool   `url:"ext_camera,omitempty"`
-	IncludeStats      bool   `url:"ext_stats,omitempty"`
+	Offset uint16 `url:"offset,omitempty"`
+	Limit  uint8  `url:"limit,omitempty"`
+
+	IncludeSubmission bool `url:"ext_submission,omitempty"`
+	IncludeCamera     bool `url:"ext_camera,omitempty"`
+	IncludeStats      bool `url:"ext_stats,omitempty"`
 }
 
 // RootStackID is an ID to list contents of a root stack.
@@ -104,14 +103,14 @@ const RootStackID = 0
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) StackContents(stackID int64, params *StackContentsParams) (StackContents, error) {
+func (s *stashService) StackContents(stackID int64, params *StackContentsParams) (OffsetResponse[StashMetadata], error) {
 	var (
-		success StackContents
+		success OffsetResponse[StashMetadata]
 		failure Error
 	)
 	_, err := s.sling.New().Get(strconv.FormatInt(stackID, 10)+"/contents").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return StackContents{}, fmt.Errorf("unable to fetch stack contents: %w", err)
+		return OffsetResponse[StashMetadata]{}, fmt.Errorf("unable to fetch stack contents: %w", err)
 	}
 	return success, nil
 }
@@ -147,8 +146,8 @@ type StashDeltaResponse struct {
 	NextOffset int    `json:"next_offset"`
 	Reset      bool   `json:"reset"`
 	Entries    []struct {
-		ItemID   int           `json:"itemid,omitempty"`
-		StackID  int           `json:"stackid,omitempty"`
+		ItemID   int64         `json:"itemid,omitempty"`
+		StackID  int64         `json:"stackid,omitempty"`
 		Metadata StashMetadata `json:"stash_metadata"`
 		Position int           `json:"position,omitempty"`
 	} `json:"entries,omitempty"`

@@ -71,14 +71,14 @@ type FriendsSearchParams struct {
 //   - browse
 func (s *friendsService) Search(params *FriendsSearchParams) ([]User, error) {
 	var (
-		success map[string]any
+		success singleResponse[User]
 		failure Error
 	)
 	_, err := s.sling.New().Get("search").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return nil, fmt.Errorf("unable to search friends: %w", err)
 	}
-	return success["results"].([]User), nil
+	return success.Results, nil
 }
 
 // Watch watches a user.

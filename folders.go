@@ -66,7 +66,7 @@ func (s *foldersService[T]) Folder(folderID uuid.UUID, params *FolderParams, pag
 		success FolderContent
 		failure Error
 	)
-	_, err := s.sling.New().Get(folderID.String()).QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get(folderID.String()).QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return FolderContent{}, fmt.Errorf("unable to fetch folder: %w", err)
 	}
@@ -112,7 +112,7 @@ func (s *foldersService[T]) Folders(params *UsernameParams, page *OffsetParams) 
 		success OffsetResponse[T]
 		failure Error
 	)
-	_, err := s.sling.New().Get("folders").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("folders").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return OffsetResponse[T]{}, fmt.Errorf("unable to fetch folders: %w", err)
 	}
