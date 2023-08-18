@@ -42,6 +42,20 @@ const (
 	UserScope        = "user"
 )
 
+var AllScopes = []string{
+	BasicScope,
+	BrowseMLTScope,
+	BrowseScope,
+	CollectionScope,
+	CommentPostScope,
+	GalleryScope,
+	MessageScope,
+	PublishScope,
+	StashScope,
+	UserManageScope,
+	UserScope,
+}
+
 // AuthorizationCode grant is the most common OAuth2 grant type and gives access
 // to aspects of a users account. Use this method if you need to upload images.
 func AuthorizationCode(clientID, clientSecret string, scopes []string, callbackURL string) Authenticator {

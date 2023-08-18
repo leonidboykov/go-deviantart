@@ -79,8 +79,7 @@ type MessagesFeedParams struct {
 	// True to use stacked mode, false to use flat mode.
 	Stack bool `url:"stack,omitempty"`
 
-	Cursor      string `url:"cursor,omitempty"`
-	WithSession bool   `url:"with_session,omitempty"`
+	Cursor string `url:"cursor,omitempty"`
 }
 
 // Feed fetches feed of all messages.
@@ -123,8 +122,6 @@ type MessagesFeedbackParams struct {
 
 	// The pagination limit.
 	Limit int `url:"limit,omitempty"`
-
-	WithSession bool `url:"with_session,omitempty"`
 }
 
 // Feedback fetches feedback messages.
@@ -184,8 +181,6 @@ type MessagesMentionsParams struct {
 
 	// The pagination limit.
 	Limit int `url:"limit,omitempty"`
-
-	WithSession bool `url:"with_session,omitempty"`
 }
 
 // Mentions fetches mention messages.

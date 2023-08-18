@@ -134,7 +134,6 @@ type Content struct {
 	HTML     string   `json:"html,omitempty"`
 	CSS      string   `json:"css,omitempty"`
 	CSSFonts []string `json:"css_fonts,omitempty"`
-	Session  *Session `json:"session,omitempty"`
 }
 
 // Content fetches a full data that is not included in the main deviation
@@ -321,7 +320,6 @@ type DeviationStats struct {
 
 type MetadataResponse struct {
 	Metatada []DeviationMetadata `json:"metadata"`
-	Session  *Session            `json:"session,omitempty"`
 }
 
 type MetadataParams struct {
@@ -333,7 +331,6 @@ type MetadataParams struct {
 	IncludeStats      bool `url:"ext_stats,omitempty"`
 	IncludeCollection bool `url:"ext_collection,omitempty"`
 	IncludeGallery    bool `url:"ext_gallery,omitempty"`
-	WithSession       bool `url:"with_session,omitempty"`
 }
 
 // Metadata fetches a deviation metadata for a set of deviations.

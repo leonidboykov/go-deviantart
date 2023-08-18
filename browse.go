@@ -19,8 +19,7 @@ func newBrowseService(sling *sling.Sling) *browseService {
 }
 
 type DailyDeviationsParams struct {
-	Date        time.Time `url:"date,omitempty" layout:"2006-01-02"`
-	WithSession bool      `url:"with_session,omitempty"` // TODO: Move WithSession to parameters.
+	Date time.Time `url:"date,omitempty" layout:"2006-01-02"`
 }
 
 // DailyDeviations fetches daily deviations.

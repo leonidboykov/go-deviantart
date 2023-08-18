@@ -7,19 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type Session struct {
-	User struct {
-		UserID      uuid.UUID `json:"userid"`
-		UserName    string    `json:"username"`
-		UserIcon    string    `json:"usericon"`
-		SymbolClass string    `json:"symbol_class"`
-	} `json:"user"`
-	Counts struct {
-		Feedback int32 `json:"feedback"`
-		Notes    int32 `json:"notes"`
-	} `json:"counts"`
-}
-
 type User struct {
 	UserID       uuid.UUID `json:"userid"`
 	UserName     string    `json:"username"`
@@ -59,7 +46,6 @@ type User struct {
 			IsPinned bool `json:"is_pinned"`
 		} `json:"watched,omitempty"`
 	} `json:"sidebar,omitempty"`
-	Session Session `json:"session,omitempty"`
 }
 
 type userService struct {

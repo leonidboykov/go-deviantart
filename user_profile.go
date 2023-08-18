@@ -46,7 +46,6 @@ type Profile struct {
 		Parent   uuid.UUID `json:"parent,omitempty"`
 		Name     string    `json:"name"`
 	} `json:"galleries,omitempty"`
-	Session *Session `json:"session,omitempty"`
 }
 
 type GetProfileParams struct {
@@ -55,9 +54,6 @@ type GetProfileParams struct {
 
 	// Include gallery folder info.
 	IncludeGalleries bool `url:"ext_galleries,omitempty"`
-
-	// Session data is not always needed for this endpoint.
-	WithSession bool `url:"with_session,omitempty"`
 }
 
 // Profile gets user profile information.
