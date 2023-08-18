@@ -34,7 +34,7 @@ type CreateJournalParams struct {
 
 // CreateJournal creates journal.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -80,7 +80,7 @@ type UpdateJournalParams struct {
 // value send the old one. To clear cover image deviation id value - pass
 // `reset_cover_image_deviation_id` param with value `true`.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:

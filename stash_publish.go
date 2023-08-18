@@ -94,7 +94,13 @@ type StashPublishResponse struct {
 
 // Publish a Sta.sh item to deviantART.
 //
-// Requires Authorization Code grant.
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
+//   - publish
 func (s *stashService) Publish(params StashPublishParams) (StashPublishResponse, error) {
 	var (
 		success StashPublishResponse

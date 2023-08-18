@@ -60,6 +60,13 @@ type StashStats struct {
 }
 
 // Stack fetches a stash stack's metadata.
+//
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
 func (s *stashService) Stack(stackID int64) (StashMetadata, error) {
 	var (
 		success StashMetadata
@@ -91,7 +98,12 @@ const RootStackID = 0
 
 // StackContents fetches stack contents.
 //
-// Requires Authorization Code grant.
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
 func (s *stashService) StackContents(stackID int64, params *StackContentsParams) (StackContents, error) {
 	var (
 		success StackContents
@@ -110,7 +122,12 @@ type deleteParams struct {
 
 // Delete deletes a previously submitted file.
 //
-// Requires Authorization Code grant.
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
 func (s *stashService) Delete(itemID int64) (bool, error) {
 	var (
 		// TODO: Check error_description.
@@ -174,7 +191,12 @@ type StashDeltaParams struct {
 // calls. This cursor tells us which data you have already received so that we
 // can send you only new and modified stacks and items.
 //
-// Requires Authorization Code grant.
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
 func (s *stashService) Delta(params *StashDeltaParams) (StashDeltaResponse, error) {
 	var (
 		success StashDeltaResponse
@@ -204,7 +226,12 @@ type moveParams struct {
 // well. New stack may be created if the target stack is a leaf stack, i.e. has
 // no children stacks yet.
 //
-// Requires Authorization Code grant.
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
 func (s *stashService) Move(stackID, targetID int64) (StashMoveResponse, error) {
 	var (
 		success StashMoveResponse
@@ -218,6 +245,14 @@ func (s *stashService) Move(stackID, targetID int64) (StashMoveResponse, error) 
 	return success, nil
 }
 
+// Position changes the position of a stack within its parent.
+//
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
 func (s *stashService) Position(stackID, position int64) (bool, error) {
 	type positionParams struct {
 		Position int64 `url:"position"`
@@ -242,7 +277,13 @@ type StashUserdata struct {
 
 // Userdata fetches users data about features and agreements.
 //
-// TODO: Check if this endpoint has any use.
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
+//   - publish
 func (s *stashService) Userdata() (StashUserdata, error) {
 	var (
 		success StashUserdata
@@ -262,6 +303,13 @@ type StashSpace struct {
 
 // Space returns how much sta.sh space (expressed in bytes) a user has available
 // for new uploads.
+//
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
 func (s *stashService) Space() (StashSpace, error) {
 	var (
 		success StashSpace
@@ -279,6 +327,14 @@ type StashUpdateParams struct {
 	Description string `url:"description,omitempty"`
 }
 
+// Update updates the stash stack's details.
+//
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
 func (s *stashService) Update(stackID int64, params *StashUpdateParams) (bool, error) {
 	var (
 		success map[string]any

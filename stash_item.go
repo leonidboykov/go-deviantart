@@ -20,6 +20,13 @@ type ItemParams struct {
 }
 
 // Item fetches stash item's metadata.
+//
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
 func (s *stashService) Item(itemID int64, params *ItemParams) (StashItem, error) {
 	var (
 		success StashItem

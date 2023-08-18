@@ -43,7 +43,7 @@ type CreateLiteratureParams struct {
 
 // CreateLiterature creates literature.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -90,7 +90,7 @@ type UpdateLiteratureParams struct {
 // UpdateLiterature updates literature. Note: null/empty values will have the
 // corresponding fields cleared. To keep a field value send the old one.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:

@@ -48,7 +48,7 @@ type faveParams struct {
 // Users can fave their own deviations, when this happens the fave is not
 // counted but the item is added to the requested folder.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -79,7 +79,7 @@ func (s *collectionsService) Fave(deviationID uuid.UUID, folderIDs ...uuid.UUID)
 // deviation from a given folder. Favorite counts are not affected if the
 // deviation is owned by the user.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:

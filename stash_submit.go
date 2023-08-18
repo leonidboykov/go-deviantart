@@ -38,9 +38,18 @@ type StashSubmitParams struct {
 	StackID int64 `url:"stackid,omitempty"`
 }
 
-// Submit
+// Submit submits files to Sta.sh or modify existing files.
 //
-// Requires Authorization Code grant.
+// It can receive files in any format. Some formats like JPG, PNG, GIF, HTML or
+// plain text can be viewed directly on Sta.sh and DeviantArt. Other file types
+// are made available for download and may have a preview image.
+//
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - stash
 func (s *stashService) Submit(params *StashSubmitParams) error {
 	var (
 		success map[string]any

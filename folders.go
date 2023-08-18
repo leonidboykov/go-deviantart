@@ -55,7 +55,7 @@ type FolderContent struct {
 
 // Folder fetches folder contents.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -79,7 +79,7 @@ type UsernameParams struct {
 
 // All gets the "all" view of a users collection/gallery.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -99,7 +99,7 @@ func (s *foldersService[T]) All(params *UsernameParams) (OffsetResponse[Deviatio
 
 // Folders fetches collection folders.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -126,7 +126,7 @@ type CopyDeviationsParams struct {
 
 // CopyDeviations copies a list of deviations to a folder destination.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -160,7 +160,7 @@ type CreateFolderParams struct {
 
 // Creates new collection folder.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -192,7 +192,7 @@ type MoveDeviationsParams struct {
 
 // MoveDeviations moves a list of deviations to a folder destination.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -212,7 +212,7 @@ func (s *foldersService[T]) MoveDeviations(params *MoveDeviationsParams) error {
 
 // Remove deletes collection folder.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -240,7 +240,7 @@ type RemoveDeviationsParams struct {
 
 // RemoveDeviations removes a list of deviations from a gallery folder.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -274,7 +274,7 @@ type UpdateFoldersParams struct {
 
 // Update updates folder.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -305,7 +305,7 @@ type UpdateDeviationOrderParams struct {
 
 // UpdateDeviationOrder updates order of deviation in folder.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -333,7 +333,7 @@ type UpdateOrderParams struct {
 
 // UpdateOrder rearranges the position of folders.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:

@@ -116,7 +116,7 @@ type DeviationUpdateResponse struct {
 
 // Deviation fetches a deviation.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -148,7 +148,7 @@ type Content struct {
 // from API contain only excerpt of a journal, use this endpoint to load full
 // content. Any custom CSS rules and fonts applied to journal are also returned.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -177,7 +177,7 @@ type DownloadResponse struct {
 
 // Download fetches the original file download (if allowed).
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -227,7 +227,7 @@ type EditDeviationParams struct {
 // Edit edits deviation. Note: null/empty values will have the corresponding
 // fields cleared. To keep a field value send the old one.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -259,7 +259,7 @@ type EmbeddedContentParams struct {
 // Journal and literature deviations support embedding of deviations inside
 // them.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -347,7 +347,7 @@ type MetadataParams struct {
 // This endpoint is limited to 50 deviations per query when fetching the base
 // data and 10 when fetching extended data.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -372,7 +372,7 @@ type FaveInfo struct {
 
 // WhoFaved fetches a list of users who faved the deviation.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:

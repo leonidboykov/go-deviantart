@@ -81,7 +81,7 @@ type CommentSiblings struct {
 
 // CommentSiblings fetches siblings of a comment.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -124,7 +124,7 @@ type CommentsResponse struct {
 
 // DeviationComments fetch comments posted on deviation.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -144,7 +144,7 @@ func (s *commentsService) DeviationComments(deviationID uuid.UUID, params *Fetch
 
 // ProfileComments fetch comments posted on user profile.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -164,7 +164,7 @@ func (s *commentsService) ProfileComments(username string, params *FetchComments
 
 // StatusComments fetch comments posted on status.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Client Credentials
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
 // Grant, or Authorization Code Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -192,7 +192,7 @@ type CommentParams struct {
 
 // CommentDeviation posts a comment on a deviation.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -213,7 +213,7 @@ func (s *commentsService) CommentDeviation(deviationID uuid.UUID, params *Commen
 
 // CommentProfile posts a comment on a users profile.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -234,7 +234,7 @@ func (s *commentsService) CommentProfile(username string, params *CommentParams)
 
 // CommentStatus posts a comment on a status.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:

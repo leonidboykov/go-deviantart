@@ -55,7 +55,7 @@ type DeleteMessageParams struct {
 
 // Delete deletes a message or a message stack.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -97,7 +97,7 @@ type MessagesFeed struct {
 // be returned. stackid can be used to fetch the rest of the messages in the
 // stack.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -141,7 +141,7 @@ type MessagesFeedbackParams struct {
 // be returned. stackid can be used to fetch the rest of the messages in the
 // stack.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -171,7 +171,7 @@ type StackFeedbackParams struct {
 
 // Fetch messages in a stack.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -219,7 +219,7 @@ type MessagesMentions struct {
 // be returned. stackid can be used to fetch the rest of the messages in the
 // stack.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
@@ -239,7 +239,7 @@ func (s *messagesService) Mentions(params *MessagesMentionsParams) (MessagesMent
 
 // StackMentions fetches messages in a stack.
 //
-// To connect to this endpoint, OAuth2 Access Token, from the Authorization Code
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
 // Grant is required.
 //
 // The following scopes are required to access this resource:
