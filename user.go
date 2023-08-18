@@ -80,6 +80,13 @@ type damntokenResponse struct {
 }
 
 // DAmnToken retrieves the dAmn auth token required to connect to the dAmn servers.
+//
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - user
 func (s *userService) DAmnToken() (string, error) {
 	var (
 		success damntokenResponse
@@ -92,6 +99,16 @@ func (s *userService) DAmnToken() (string, error) {
 	return success.DAmnToken, nil
 }
 
+// Tiers fetches users tiers.
+//
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - user
+//
+// TODO: Scope is missing in docs.
 func (s *userService) Tiers(username string) ([]Deviation, error) {
 	var (
 		success singleResponse[Deviation]
@@ -105,6 +122,13 @@ func (s *userService) Tiers(username string) ([]Deviation, error) {
 }
 
 // Watchers gets the user's list of watchers.
+//
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *userService) Watchers(username string, page *OffsetParams) (OffsetResponse[Friend], error) {
 	var (
 		success OffsetResponse[Friend]
@@ -118,6 +142,13 @@ func (s *userService) Watchers(username string, page *OffsetParams) (OffsetRespo
 }
 
 // Whoami fetches user info of authenticated user.
+//
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - user
 func (s *userService) Whoami() (User, error) {
 	var (
 		success User
@@ -131,6 +162,13 @@ func (s *userService) Whoami() (User, error) {
 }
 
 // Whois fetches user info for given usernames.
+//
+// To connect to this endpoint OAuth2 Access Token from the Authorization Code
+// Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *userService) Whois(usernames ...string) ([]User, error) {
 	type usernameParams struct {
 		Usernames []string `url:"usernames"` // TODO: Implement square brackets with number inside.

@@ -61,6 +61,13 @@ type GetProfileParams struct {
 }
 
 // Profile gets user profile information.
+//
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *userService) Profile(username string, params *GetProfileParams) (Profile, error) {
 	var (
 		success Profile
@@ -78,6 +85,13 @@ type usernameParams struct {
 }
 
 // Posts returns all journals & status updates for a given user in a single feed.
+//
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *userService) Posts(username string, page *CursorParams) (CursorResponse[Deviation], error) {
 	var (
 		success CursorResponse[Deviation]

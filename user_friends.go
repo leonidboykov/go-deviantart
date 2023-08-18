@@ -17,20 +17,11 @@ func newFriendsService(sling *sling.Sling) *friendsService {
 }
 
 type Friend struct {
-	User       *User  `json:"user"`
-	IsWatching bool   `json:"is_watching"`
-	WatchesYou bool   `json:"watches_you"`
-	LastVisit  string `json:"omitempty"` // TODO: Parse time.
-	Watch      struct {
-		Friend       bool `json:"friend"`
-		Deviations   bool `json:"deviations"`
-		Journals     bool `json:"journals"`
-		ForumThreads bool `json:"forum_threads"`
-		Critiques    bool `json:"critiques"`
-		Scraps       bool `json:"scraps"`
-		Activity     bool `json:"activity"`
-		Collections  bool `json:"collections"`
-	} `json:"watch"`
+	User       *User     `json:"user"`
+	IsWatching bool      `json:"is_watching"`
+	WatchesYou bool      `json:"watches_you"`
+	LastVisit  string    `json:"lastvisit,omitempty"` // TODO: Parse time.
+	Watch      UserWatch `json:"watch"`
 }
 
 type UserWatch struct {
@@ -45,6 +36,13 @@ type UserWatch struct {
 }
 
 // Get gets the users list of friends.
+//
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *friendsService) Get(username string, page *OffsetParams) (OffsetResponse[Friend], error) {
 	var (
 		success OffsetResponse[Friend]
@@ -63,6 +61,14 @@ type FriendsSearchParams struct {
 	Query    string `url:"query,omitempty"`
 }
 
+// Search searches friends by username.
+//
+// To connect to this endpoint OAuth2 Access Token from the Client Credentials
+// Grant, or Authorization Code Grant is required.
+//
+// The following scopes are required to access this resource:
+//
+//   - browse
 func (s *friendsService) Search(params *FriendsSearchParams) ([]User, error) {
 	var (
 		success map[string]any
@@ -81,6 +87,8 @@ func (s *friendsService) Search(params *FriendsSearchParams) ([]User, error) {
 //
 //   - browse
 //   - user.manage
+//
+// TODO: Make better comments for access types and scopes (make it in a single paragraph/sentence).
 func (s *friendsService) Watch(username string, params *UserWatch) (bool, error) {
 	type watch struct {
 		Watch UserWatch `url:"watch"`
@@ -102,6 +110,8 @@ func (s *friendsService) Watch(username string, params *UserWatch) (bool, error)
 //
 //   - browse
 //   - user.manage
+//
+// TODO: Make better comments for access types and scopes (make it in a single paragraph/sentence).
 func (s *friendsService) Unwatch(username string) (bool, error) {
 	var (
 		success map[string]any
@@ -120,6 +130,8 @@ func (s *friendsService) Unwatch(username string) (bool, error) {
 //
 //   - browse
 //   - user
+//
+// TODO: Make better comments for access types and scopes (make it in a single paragraph/sentence).
 func (s *friendsService) Watching(username string) (bool, error) {
 	var (
 		success map[string]any
