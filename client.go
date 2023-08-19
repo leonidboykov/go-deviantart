@@ -13,14 +13,14 @@ type StatusResponse struct {
 // Client provices access to DeviantArt API endpoint.
 type Client struct {
 	base        *sling.Sling
-	Browse      *browseService
-	Collections *collectionsService
-	Comments    *commentsService
-	Deviation   *deviationService
-	Gallery     *galleryService
-	Messages    *messagesService
-	Stash       *stashService
-	User        *userService
+	Browse      *BrowseService
+	Collections *CollectionsService
+	Comments    *CommentsService
+	Deviation   *DeviationService
+	Gallery     *GalleryService
+	Messages    *MessagesService
+	Stash       *StashService
+	User        *UserService
 }
 
 type withMatureContentParams struct {

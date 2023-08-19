@@ -16,16 +16,16 @@ type Collection struct {
 	Deviations  []Deviation `json:"deviations,omitempty"`
 }
 
-type collectionsService struct {
+type CollectionsService struct {
 	sling *sling.Sling
-	*foldersService[Collection]
+	*FoldersService[Collection]
 }
 
-func newCollectionsService(sling *sling.Sling) *collectionsService {
+func newCollectionsService(sling *sling.Sling) *CollectionsService {
 	base := sling.Path("collections/")
-	return &collectionsService{
+	return &CollectionsService{
 		sling:          base,
-		foldersService: newFoldersService[Collection](base.New()),
+		FoldersService: newFoldersService[Collection](base.New()),
 	}
 }
 
@@ -55,7 +55,7 @@ type faveParams struct {
 //
 //   - browse
 //   - collection
-func (s *collectionsService) Fave(deviationID uuid.UUID, folderIDs ...uuid.UUID) (int, error) {
+func (s *CollectionsService) Fave(deviationID uuid.UUID, folderIDs ...uuid.UUID) (int, error) {
 	var (
 		success map[string]any
 		failure Error
@@ -86,7 +86,7 @@ func (s *collectionsService) Fave(deviationID uuid.UUID, folderIDs ...uuid.UUID)
 //
 //   - browse
 //   - collection
-func (s *collectionsService) Unfave(deviationID uuid.UUID, folderIDs ...uuid.UUID) (int, error) {
+func (s *CollectionsService) Unfave(deviationID uuid.UUID, folderIDs ...uuid.UUID) (int, error) {
 	var (
 		success map[string]any
 		failure Error

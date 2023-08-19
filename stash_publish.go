@@ -6,11 +6,13 @@ import (
 	"github.com/google/uuid"
 )
 
+// The mature level of the submission.
 const (
 	MatureLevelStrict   = "strict"
 	MatureLevelModerate = "moderate"
 )
 
+// The mature classification of the submission.
 const (
 	MatureClassificationNudity   = "nudity"
 	MatureClassificationSexual   = "sexual"
@@ -101,7 +103,7 @@ type StashPublishResponse struct {
 //
 //   - stash
 //   - publish
-func (s *stashService) Publish(params StashPublishParams) (StashPublishResponse, error) {
+func (s *StashService) Publish(params StashPublishParams) (StashPublishResponse, error) {
 	var (
 		success StashPublishResponse
 		failure Error

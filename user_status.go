@@ -38,7 +38,7 @@ type Status struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *userService) Status(statusID uuid.UUID) (Status, error) {
+func (s *UserService) Status(statusID uuid.UUID) (Status, error) {
 	var (
 		success Status
 		failure Error
@@ -58,7 +58,7 @@ func (s *userService) Status(statusID uuid.UUID) (Status, error) {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *userService) Statuses(username string, page *OffsetParams) (OffsetResponse[Status], error) {
+func (s *UserService) Statuses(username string, page *OffsetParams) (OffsetResponse[Status], error) {
 	var (
 		success OffsetResponse[Status]
 		failure Error
@@ -97,7 +97,7 @@ type PostStatusParams struct {
 //
 //   - browse
 //   - user.manage
-func (s *userService) PostStatus(params *PostStatusParams) (uuid.UUID, error) {
+func (s *UserService) PostStatus(params *PostStatusParams) (uuid.UUID, error) {
 	type response struct {
 		StatusID uuid.UUID `json:"statusid"`
 	}

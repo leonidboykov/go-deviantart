@@ -27,7 +27,7 @@ type ItemParams struct {
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) Item(itemID int64, params *ItemParams) (StashItem, error) {
+func (s *StashService) Item(itemID int64, params *ItemParams) (StashItem, error) {
 	var (
 		success StashItem
 		failure Error

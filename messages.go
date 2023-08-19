@@ -7,12 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type messagesService struct {
+type MessagesService struct {
 	sling *sling.Sling
 }
 
-func newMessagesService(sling *sling.Sling) *messagesService {
-	return &messagesService{
+func newMessagesService(sling *sling.Sling) *MessagesService {
+	return &MessagesService{
 		sling: sling.Path("messages/"),
 	}
 }
@@ -61,7 +61,7 @@ type DeleteMessageParams struct {
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) Delete(params *DeleteMessageParams) error {
+func (s *MessagesService) Delete(params *DeleteMessageParams) error {
 	var (
 		failure Error
 	)
@@ -95,7 +95,7 @@ type MessagesFeedParams struct {
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) Feed(params *MessagesFeedParams) (CursorResponse[Message], error) {
+func (s *MessagesService) Feed(params *MessagesFeedParams) (CursorResponse[Message], error) {
 	var (
 		success CursorResponse[Message]
 		failure Error
@@ -137,7 +137,7 @@ type MessagesFeedbackParams struct {
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) Feedback(params *MessagesFeedbackParams) (CursorResponse[Message], error) {
+func (s *MessagesService) Feedback(params *MessagesFeedbackParams) (CursorResponse[Message], error) {
 	var (
 		success CursorResponse[Message]
 		failure Error
@@ -157,7 +157,7 @@ func (s *messagesService) Feedback(params *MessagesFeedbackParams) (CursorRespon
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) StackFeedback(stackID string, page *OffsetParams) (CursorResponse[Message], error) {
+func (s *MessagesService) StackFeedback(stackID string, page *OffsetParams) (CursorResponse[Message], error) {
 	var (
 		success CursorResponse[Message]
 		failure Error
@@ -196,7 +196,7 @@ type MessagesMentionsParams struct {
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) Mentions(params *MessagesMentionsParams) (OffsetResponse[Message], error) {
+func (s *MessagesService) Mentions(params *MessagesMentionsParams) (OffsetResponse[Message], error) {
 	var (
 		success OffsetResponse[Message]
 		failure Error
@@ -216,7 +216,7 @@ func (s *messagesService) Mentions(params *MessagesMentionsParams) (OffsetRespon
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *messagesService) StackMentions(stackID string, page *OffsetParams) (OffsetResponse[Message], error) {
+func (s *MessagesService) StackMentions(stackID string, page *OffsetParams) (OffsetResponse[Message], error) {
 	var (
 		success OffsetResponse[Message]
 		failure Error

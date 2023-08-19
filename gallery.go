@@ -18,15 +18,15 @@ type Gallery struct {
 	Deviations        []Deviation        `json:"deviations,omitempty"`
 }
 
-type galleryService struct {
+type GalleryService struct {
 	sling *sling.Sling
-	*foldersService[Gallery]
+	*FoldersService[Gallery]
 }
 
-func newGalleryService(sling *sling.Sling) *galleryService {
+func newGalleryService(sling *sling.Sling) *GalleryService {
 	base := sling.Path("gallery/")
-	return &galleryService{
+	return &GalleryService{
 		sling:          base,
-		foldersService: newFoldersService[Gallery](base.New()),
+		FoldersService: newFoldersService[Gallery](base.New()),
 	}
 }

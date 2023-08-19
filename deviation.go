@@ -7,12 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type deviationService struct {
+type DeviationService struct {
 	sling *sling.Sling
 }
 
-func newDeviationService(sling *sling.Sling) *deviationService {
-	return &deviationService{
+func newDeviationService(sling *sling.Sling) *DeviationService {
+	return &DeviationService{
 		sling: sling.Path("deviation/"),
 	}
 }
@@ -118,7 +118,7 @@ type DeviationUpdateResponse struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *deviationService) Deviation(deviationID uuid.UUID) (Deviation, error) {
+func (s *DeviationService) Deviation(deviationID uuid.UUID) (Deviation, error) {
 	var (
 		success Deviation
 		failure Error
@@ -149,7 +149,7 @@ type Content struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *deviationService) Content(deviationID uuid.UUID) (Content, error) {
+func (s *DeviationService) Content(deviationID uuid.UUID) (Content, error) {
 	var (
 		success Content
 		failure Error
@@ -176,7 +176,7 @@ type DownloadResponse struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *deviationService) Download(deviationID uuid.UUID) (DownloadResponse, error) {
+func (s *DeviationService) Download(deviationID uuid.UUID) (DownloadResponse, error) {
 	var (
 		success DownloadResponse
 		failure Error
@@ -227,7 +227,7 @@ type EditDeviationParams struct {
 //
 //   - stash
 //   - publish
-func (s *deviationService) Edit(deviationID uuid.UUID, params *EditDeviationParams) (DeviationUpdateResponse, error) {
+func (s *DeviationService) Edit(deviationID uuid.UUID, params *EditDeviationParams) (DeviationUpdateResponse, error) {
 	var (
 		success DeviationUpdateResponse
 		failure Error
@@ -258,7 +258,7 @@ type EmbeddedContentParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *deviationService) EmbeddedContent(params *EmbeddedContentParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
+func (s *DeviationService) EmbeddedContent(params *EmbeddedContentParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
@@ -344,7 +344,7 @@ type MetadataParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *deviationService) Metadata(params *MetadataParams) (MetadataResponse, error) {
+func (s *DeviationService) Metadata(params *MetadataParams) (MetadataResponse, error) {
 	var (
 		success MetadataResponse
 		failure Error
@@ -369,7 +369,7 @@ type FaveInfo struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *deviationService) WhoFaved(deviationID uuid.UUID, page *OffsetParams) (OffsetResponse[FaveInfo], error) {
+func (s *DeviationService) WhoFaved(deviationID uuid.UUID, page *OffsetParams) (OffsetResponse[FaveInfo], error) {
 	var (
 		success OffsetResponse[FaveInfo]
 		failure Error

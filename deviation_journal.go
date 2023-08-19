@@ -40,7 +40,7 @@ type CreateJournalParams struct {
 // The following scopes are required to access this resource:
 //
 //   - user.manage
-func (s *deviationService) CreateJournal(params *CreateJournalParams) (uuid.UUID, error) {
+func (s *DeviationService) CreateJournal(params *CreateJournalParams) (uuid.UUID, error) {
 	var (
 		success map[string]uuid.UUID
 		failure Error
@@ -86,7 +86,7 @@ type UpdateJournalParams struct {
 // The following scopes are required to access this resource:
 //
 //   - user.manage
-func (s *deviationService) UpdateJournal(deviationID uuid.UUID, params *UpdateJournalParams) (DeviationUpdateResponse, error) {
+func (s *DeviationService) UpdateJournal(deviationID uuid.UUID, params *UpdateJournalParams) (DeviationUpdateResponse, error) {
 	var (
 		success DeviationUpdateResponse
 		failure Error
