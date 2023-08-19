@@ -1,9 +1,10 @@
 # go-deviantart
 
-> 🚧 The project in currently in WIP status. Not all endpoints are testes,
-> unit-tests are missing.
+> 🚧 The project is currently in WIP status. Not all endpoints are tests,
+> unit-tests are missing, many TODOs, etc. Please, consider waiting release
+> version
 
 DeviantArt API for Go.
 
-The most of features are implemented, only deprecated and pointless endpoints
-are omitted.
+Most features are implemented, and only deprecated and pointless endpoints are
+omitted.
