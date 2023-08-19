@@ -15,12 +15,12 @@ type Folder struct {
 	Owner    *User  `json:"owner,omitempty"` // TODO: Do we need this field?
 }
 
-type foldersService[T Collection | Gallery] struct {
+type FoldersService[T Collection | Gallery] struct {
 	sling *sling.Sling
 }
 
-func newFoldersService[T Collection | Gallery](sling *sling.Sling) *foldersService[T] {
-	return &foldersService[T]{
+func newFoldersService[T Collection | Gallery](sling *sling.Sling) *FoldersService[T] {
+	return &FoldersService[T]{
 		sling: sling,
 	}
 }
@@ -62,7 +62,7 @@ type FolderContent struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *foldersService[T]) Folder(folderID uuid.UUID, params *FolderParams, page *OffsetParams) (FolderContent, error) {
+func (s *FoldersService[T]) Folder(folderID uuid.UUID, params *FolderParams, page *OffsetParams) (FolderContent, error) {
 	var (
 		success FolderContent
 		failure Error
@@ -86,7 +86,7 @@ type usernameParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *foldersService[T]) All(username string) (OffsetResponse[Deviation], error) {
+func (s *FoldersService[T]) All(username string) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
@@ -109,7 +109,7 @@ func (s *foldersService[T]) All(username string) (OffsetResponse[Deviation], err
 //   - browse
 //
 // TODO: Support `ext_preload` for collections.
-func (s *foldersService[T]) Folders(params *FoldersParams, page *OffsetParams) (OffsetResponse[T], error) {
+func (s *FoldersService[T]) Folders(params *FoldersParams, page *OffsetParams) (OffsetResponse[T], error) {
 	var (
 		success OffsetResponse[T]
 		failure Error
@@ -135,7 +135,7 @@ type CopyDeviationsParams struct {
 //
 //   - browse
 //   - collection or gallery
-func (s *foldersService[T]) CopyDeviations(params *CopyDeviationsParams) error {
+func (s *FoldersService[T]) CopyDeviations(params *CopyDeviationsParams) error {
 	var (
 		failure Error
 	)
@@ -168,7 +168,7 @@ type CreateFolderParams struct {
 //
 //   - browse
 //   - collection or gallery
-func (s *foldersService[T]) Create(params *CreateFolderParams) (Folder, error) {
+func (s *FoldersService[T]) Create(params *CreateFolderParams) (Folder, error) {
 	var (
 		success Folder
 		failure Error
@@ -200,7 +200,7 @@ type MoveDeviationsParams struct {
 //
 //   - browse
 //   - collection or gallery
-func (s *foldersService[T]) MoveDeviations(params *MoveDeviationsParams) error {
+func (s *FoldersService[T]) MoveDeviations(params *MoveDeviationsParams) error {
 	var (
 		failure Error
 	)
@@ -220,7 +220,7 @@ func (s *foldersService[T]) MoveDeviations(params *MoveDeviationsParams) error {
 //
 //   - browse
 //   - collection or gallery
-func (s *foldersService[T]) Remove(folderID uuid.UUID) error {
+func (s *FoldersService[T]) Remove(folderID uuid.UUID) error {
 	var (
 		failure Error
 	)
@@ -248,7 +248,7 @@ type RemoveDeviationsParams struct {
 //
 //   - browse
 //   - collection or gallery
-func (s *foldersService[T]) RemoveDeviations(params *RemoveDeviationsParams) error {
+func (s *FoldersService[T]) RemoveDeviations(params *RemoveDeviationsParams) error {
 	var (
 		failure Error
 	)
@@ -282,7 +282,7 @@ type UpdateFoldersParams struct {
 //
 //   - browse
 //   - collection or gallery
-func (s *foldersService[T]) Update(params *UpdateFoldersParams) error {
+func (s *FoldersService[T]) Update(params *UpdateFoldersParams) error {
 	var (
 		failure Error
 	)
@@ -313,7 +313,7 @@ type UpdateDeviationOrderParams struct {
 //
 //   - browse
 //   - collection or gallery
-func (s *foldersService[T]) UpdateDeviationOrder(params *UpdateDeviationOrderParams) error {
+func (s *FoldersService[T]) UpdateDeviationOrder(params *UpdateDeviationOrderParams) error {
 	var (
 		failure Error
 	)
@@ -341,7 +341,7 @@ type UpdateOrderParams struct {
 //
 //   - browse
 //   - collection or gallery
-func (s *foldersService[T]) UpdateOrder(params *UpdateOrderParams) error {
+func (s *FoldersService[T]) UpdateOrder(params *UpdateOrderParams) error {
 	var (
 		failure Error
 	)

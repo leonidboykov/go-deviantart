@@ -57,7 +57,7 @@ type SubmitResponse struct {
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) Submit(params *StashSubmitParams) error {
+func (s *StashService) Submit(params *StashSubmitParams) error {
 	var (
 		success SubmitResponse
 		failure Error

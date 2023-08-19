@@ -7,12 +7,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type commentsService struct {
+type CommentsService struct {
 	sling *sling.Sling
 }
 
-func newCommentsService(sling *sling.Sling) *commentsService {
-	return &commentsService{
+func newCommentsService(sling *sling.Sling) *CommentsService {
+	return &CommentsService{
 		sling: sling.Path("comments/"),
 	}
 }
@@ -87,7 +87,7 @@ type CommentSiblings struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *commentsService) CommentSiblings(commentID uuid.UUID, params *CommentSiblingsParams) (CommentSiblings, error) {
+func (s *CommentsService) CommentSiblings(commentID uuid.UUID, params *CommentSiblingsParams) (CommentSiblings, error) {
 	var (
 		success CommentSiblings
 		failure Error
@@ -130,7 +130,7 @@ type CommentsResponse struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *commentsService) DeviationComments(deviationID uuid.UUID, params *FetchCommentsParams) (CommentsResponse, error) {
+func (s *CommentsService) DeviationComments(deviationID uuid.UUID, params *FetchCommentsParams) (CommentsResponse, error) {
 	var (
 		success CommentsResponse
 		failure Error
@@ -150,7 +150,7 @@ func (s *commentsService) DeviationComments(deviationID uuid.UUID, params *Fetch
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *commentsService) ProfileComments(username string, params *FetchCommentsParams) (CommentsResponse, error) {
+func (s *CommentsService) ProfileComments(username string, params *FetchCommentsParams) (CommentsResponse, error) {
 	var (
 		success CommentsResponse
 		failure Error
@@ -170,7 +170,7 @@ func (s *commentsService) ProfileComments(username string, params *FetchComments
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *commentsService) StatusComments(statusID uuid.UUID, params *FetchCommentsParams) (CommentsResponse, error) {
+func (s *CommentsService) StatusComments(statusID uuid.UUID, params *FetchCommentsParams) (CommentsResponse, error) {
 	var (
 		success CommentsResponse
 		failure Error
@@ -199,7 +199,7 @@ type CommentParams struct {
 //
 //   - browse
 //   - comment.post
-func (s *commentsService) CommentDeviation(deviationID uuid.UUID, params *CommentParams) (Comment, error) {
+func (s *CommentsService) CommentDeviation(deviationID uuid.UUID, params *CommentParams) (Comment, error) {
 	var (
 		success Comment
 		failure Error
@@ -220,7 +220,7 @@ func (s *commentsService) CommentDeviation(deviationID uuid.UUID, params *Commen
 //
 //   - browse
 //   - comment.post
-func (s *commentsService) CommentProfile(username string, params *CommentParams) (Comment, error) {
+func (s *CommentsService) CommentProfile(username string, params *CommentParams) (Comment, error) {
 	var (
 		success Comment
 		failure Error
@@ -241,7 +241,7 @@ func (s *commentsService) CommentProfile(username string, params *CommentParams)
 //
 //   - browse
 //   - comment.post
-func (s *commentsService) CommentStatus(statusID uuid.UUID, params *CommentParams) (Comment, error) {
+func (s *CommentsService) CommentStatus(statusID uuid.UUID, params *CommentParams) (Comment, error) {
 	var (
 		success Comment
 		failure Error

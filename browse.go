@@ -8,12 +8,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type browseService struct {
+type BrowseService struct {
 	sling *sling.Sling
 }
 
-func newBrowseService(sling *sling.Sling) *browseService {
-	return &browseService{
+func newBrowseService(sling *sling.Sling) *BrowseService {
+	return &BrowseService{
 		sling: sling.Path("browse/"),
 	}
 }
@@ -29,7 +29,7 @@ func newBrowseService(sling *sling.Sling) *browseService {
 //
 // TODO: The endpoint returns the `has_more` field, but there is no offset or
 // cursor pagination information. This case requires further investigation.
-func (s *browseService) DailyDeviations(date time.Time) (OffsetResponse[Deviation], error) {
+func (s *BrowseService) DailyDeviations(date time.Time) (OffsetResponse[Deviation], error) {
 	type dateParams struct {
 		Date time.Time `url:"date,omitempty" layout:"2006-01-02"`
 	}
@@ -52,7 +52,7 @@ func (s *browseService) DailyDeviations(date time.Time) (OffsetResponse[Deviatio
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *browseService) DeviantsYouWatch(page *OffsetParams) (OffsetResponse[Deviation], error) {
+func (s *BrowseService) DeviantsYouWatch(page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
@@ -84,7 +84,7 @@ type MoreLikeThisPreviewResponse struct {
 //
 //   - browse
 //   - browse.mlt
-func (s *browseService) MoreLikeThisPreview(seed uuid.UUID) (MoreLikeThisPreviewResponse, error) {
+func (s *BrowseService) MoreLikeThisPreview(seed uuid.UUID) (MoreLikeThisPreviewResponse, error) {
 	type seedParams struct {
 		Seed string `url:"seed"`
 	}
@@ -115,7 +115,7 @@ type searchParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *browseService) Newest(query string, page *OffsetParams) (OffsetResponse[Deviation], error) {
+func (s *BrowseService) Newest(query string, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
@@ -128,7 +128,7 @@ func (s *browseService) Newest(query string, page *OffsetParams) (OffsetResponse
 	return success, nil
 }
 
-var (
+const (
 	TimeRangeNow   = "now"
 	TimeRangeWeek  = "1week"
 	TimeRangeMonth = "1month"
@@ -158,7 +158,7 @@ type PopularParams struct {
 //
 // BUG: Query does not work properly.
 // See: https://github.com/wix-incubator/DeviantArt-API/issues/206.
-func (s *browseService) Popular(params *PopularParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
+func (s *BrowseService) Popular(params *PopularParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
@@ -183,7 +183,7 @@ type JournalStatus struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *browseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetResponse[JournalStatus], error) {
+func (s *BrowseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetResponse[JournalStatus], error) {
 	var (
 		success OffsetResponse[JournalStatus]
 		failure Error
@@ -206,7 +206,7 @@ func (s *browseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetRespons
 //
 // TODO: Documentation specifies the `suggested_reasons` field but is absend in
 // all responses. This case requires further investigation.
-func (s *browseService) Recommended(query string) (OffsetResponse[Deviation], error) {
+func (s *BrowseService) Recommended(query string) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
@@ -230,7 +230,7 @@ func (s *browseService) Recommended(query string) (OffsetResponse[Deviation], er
 //
 // NOTE: This endpoint supports cursor- and offset-base pagination.
 // But for simplicity, I'll stick to cursor params for now.
-func (s *browseService) Tags(tag string, page *CursorParams) (CursorResponse[Deviation], error) {
+func (s *BrowseService) Tags(tag string, page *CursorParams) (CursorResponse[Deviation], error) {
 	type tagParams struct {
 		Tag string `url:"tag"`
 	}
@@ -256,7 +256,7 @@ func (s *browseService) Tags(tag string, page *CursorParams) (CursorResponse[Dev
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *browseService) TagsSearch(tag string) ([]string, error) {
+func (s *BrowseService) TagsSearch(tag string) ([]string, error) {
 	type tagName struct {
 		Name string `json:"tag_name" url:"tag_name"`
 	}
@@ -284,7 +284,7 @@ func (s *browseService) TagsSearch(tag string) ([]string, error) {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *browseService) Topic(topic string, page *CursorParams) (CursorResponse[Deviation], error) {
+func (s *BrowseService) Topic(topic string, page *CursorParams) (CursorResponse[Deviation], error) {
 	type topicParams struct {
 		Topic string `url:"topic"`
 	}
@@ -313,7 +313,7 @@ type Topic struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *browseService) Topics(page *CursorParams) (CursorResponse[Topic], error) {
+func (s *BrowseService) Topics(page *CursorParams) (CursorResponse[Topic], error) {
 	var (
 		success CursorResponse[Topic]
 		failure Error
@@ -333,7 +333,7 @@ func (s *browseService) Topics(page *CursorParams) (CursorResponse[Topic], error
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *browseService) TopTopics(page *CursorParams) (CursorResponse[Topic], error) {
+func (s *BrowseService) TopTopics(page *CursorParams) (CursorResponse[Topic], error) {
 	var (
 		success CursorResponse[Topic]
 		failure Error
@@ -361,7 +361,7 @@ type UserJournalsParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *browseService) UserJournals(params *UserJournalsParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
+func (s *BrowseService) UserJournals(params *UserJournalsParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error

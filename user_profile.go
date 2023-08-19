@@ -64,7 +64,7 @@ type GetProfileParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *userService) Profile(username string, params *GetProfileParams) (Profile, error) {
+func (s *UserService) Profile(username string, params *GetProfileParams) (Profile, error) {
 	var (
 		success Profile
 		failure Error
@@ -84,7 +84,7 @@ func (s *userService) Profile(username string, params *GetProfileParams) (Profil
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *userService) Posts(username string, page *CursorParams) (CursorResponse[Deviation], error) {
+func (s *UserService) Posts(username string, page *CursorParams) (CursorResponse[Deviation], error) {
 	var (
 		success CursorResponse[Deviation]
 		failure Error
@@ -97,14 +97,14 @@ func (s *userService) Posts(username string, page *CursorParams) (CursorResponse
 	return success, nil
 }
 
-var (
+const (
 	ArtistLevelNone         = "None"
 	ArtistLevelStudent      = "Student"
 	ArtistLevelHobbyist     = "Hobbyist"
 	ArtistLevelProfessional = "Professional"
 )
 
-var (
+const (
 	ArtistSpecialityNone          = "None"
 	ArtistSpecialityArtisanCrafts = "Artisan Crafts"
 	ArtistLevelDesignInterfaces   = "Design & Interfaces"
@@ -145,7 +145,7 @@ type UserInfoParams struct {
 // UpdateProfile updates the users profile information.
 //
 // Check [Countries] to get a list of countries and their IDs.
-func (s *userService) UpdateProfile(params *UserInfoParams) (bool, error) {
+func (s *UserService) UpdateProfile(params *UserInfoParams) (bool, error) {
 	var (
 		success map[string]any
 		failure Error

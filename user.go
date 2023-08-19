@@ -48,14 +48,14 @@ type User struct {
 	} `json:"sidebar,omitempty"`
 }
 
-type userService struct {
+type UserService struct {
 	sling   *sling.Sling
 	Friends *friendsService
 }
 
-func newUserService(sling *sling.Sling) *userService {
+func newUserService(sling *sling.Sling) *UserService {
 	base := sling.Path("user/")
-	return &userService{
+	return &UserService{
 		sling:   base,
 		Friends: newFriendsService(base.New()),
 	}
@@ -69,7 +69,7 @@ func newUserService(sling *sling.Sling) *userService {
 // The following scopes are required to access this resource:
 //
 //   - user
-func (s *userService) DAmnToken() (string, error) {
+func (s *UserService) DAmnToken() (string, error) {
 	var (
 		success map[string]any
 		failure Error
@@ -91,7 +91,7 @@ func (s *userService) DAmnToken() (string, error) {
 //   - user
 //
 // TODO: Scope is missing in docs.
-func (s *userService) Tiers(username string) ([]Deviation, error) {
+func (s *UserService) Tiers(username string) ([]Deviation, error) {
 	var (
 		success singleResponse[Deviation]
 		failure Error
@@ -111,7 +111,7 @@ func (s *userService) Tiers(username string) ([]Deviation, error) {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *userService) Watchers(username string, page *OffsetParams) (OffsetResponse[Friend], error) {
+func (s *UserService) Watchers(username string, page *OffsetParams) (OffsetResponse[Friend], error) {
 	var (
 		success OffsetResponse[Friend]
 		failure Error
@@ -131,7 +131,7 @@ func (s *userService) Watchers(username string, page *OffsetParams) (OffsetRespo
 // The following scopes are required to access this resource:
 //
 //   - user
-func (s *userService) Whoami() (User, error) {
+func (s *UserService) Whoami() (User, error) {
 	var (
 		success User
 		failure Error
@@ -151,7 +151,7 @@ func (s *userService) Whoami() (User, error) {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *userService) Whois(usernames ...string) ([]User, error) {
+func (s *UserService) Whois(usernames ...string) ([]User, error) {
 	type usernameParams struct {
 		Usernames []string `url:"usernames"` // TODO: Implement square brackets with number inside.
 	}

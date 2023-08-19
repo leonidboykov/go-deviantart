@@ -49,7 +49,7 @@ type CreateLiteratureParams struct {
 // The following scopes are required to access this resource:
 //
 //   - user.manage
-func (s *deviationService) CreateLiterature(params *CreateLiteratureParams) (uuid.UUID, error) {
+func (s *DeviationService) CreateLiterature(params *CreateLiteratureParams) (uuid.UUID, error) {
 	var (
 		success map[string]uuid.UUID
 		failure Error
@@ -96,7 +96,7 @@ type UpdateLiteratureParams struct {
 // The following scopes are required to access this resource:
 //
 //   - user.manage
-func (s *deviationService) UpdateLiterature(deviationID uuid.UUID, params *UpdateLiteratureParams) (DeviationUpdateResponse, error) {
+func (s *DeviationService) UpdateLiterature(deviationID uuid.UUID, params *UpdateLiteratureParams) (DeviationUpdateResponse, error) {
 	var (
 		success DeviationUpdateResponse
 		failure Error

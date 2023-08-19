@@ -18,12 +18,12 @@ type StashFile struct {
 	Transparency bool `json:"transparency"`
 }
 
-type stashService struct {
+type StashService struct {
 	sling *sling.Sling
 }
 
-func newStashService(sling *sling.Sling) *stashService {
-	return &stashService{
+func newStashService(sling *sling.Sling) *StashService {
+	return &StashService{
 		sling: sling.Path("stash/"),
 	}
 }
@@ -71,7 +71,7 @@ type StashStats struct {
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) Stack(stackID int64) (StashMetadata, error) {
+func (s *StashService) Stack(stackID int64) (StashMetadata, error) {
 	var (
 		success StashMetadata
 		failure Error
@@ -103,7 +103,7 @@ const RootStackID = 0
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) StackContents(stackID int64, params *StackContentsParams) (OffsetResponse[StashMetadata], error) {
+func (s *StashService) StackContents(stackID int64, params *StackContentsParams) (OffsetResponse[StashMetadata], error) {
 	var (
 		success OffsetResponse[StashMetadata]
 		failure Error
@@ -127,7 +127,7 @@ type deleteParams struct {
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) Delete(itemID int64) (bool, error) {
+func (s *StashService) Delete(itemID int64) (bool, error) {
 	var (
 		// TODO: Check error_description.
 		success map[string]any
@@ -196,7 +196,7 @@ type StashDeltaParams struct {
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) Delta(params *StashDeltaParams) (StashDeltaResponse, error) {
+func (s *StashService) Delta(params *StashDeltaParams) (StashDeltaResponse, error) {
 	var (
 		success StashDeltaResponse
 		failure Error
@@ -231,7 +231,7 @@ type moveParams struct {
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) Move(stackID, targetID int64) (StashMoveResponse, error) {
+func (s *StashService) Move(stackID, targetID int64) (StashMoveResponse, error) {
 	var (
 		success StashMoveResponse
 		failure Error
@@ -252,7 +252,7 @@ func (s *stashService) Move(stackID, targetID int64) (StashMoveResponse, error) 
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) Position(stackID, position int64) (bool, error) {
+func (s *StashService) Position(stackID, position int64) (bool, error) {
 	type positionParams struct {
 		Position int64 `url:"position"`
 	}
@@ -283,7 +283,7 @@ type StashUserdata struct {
 //
 //   - stash
 //   - publish
-func (s *stashService) Userdata() (StashUserdata, error) {
+func (s *StashService) Userdata() (StashUserdata, error) {
 	var (
 		success StashUserdata
 		failure Error
@@ -309,7 +309,7 @@ type StashSpace struct {
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) Space() (StashSpace, error) {
+func (s *StashService) Space() (StashSpace, error) {
 	var (
 		success StashSpace
 		failure Error
@@ -334,7 +334,7 @@ type StashUpdateParams struct {
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *stashService) Update(stackID int64, params *StashUpdateParams) (bool, error) {
+func (s *StashService) Update(stackID int64, params *StashUpdateParams) (bool, error) {
 	var (
 		success map[string]any
 		failure Error
