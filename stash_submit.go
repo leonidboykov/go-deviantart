@@ -38,6 +38,13 @@ type StashSubmitParams struct {
 	StackID int64 `url:"stackid,omitempty"`
 }
 
+type SubmitResponse struct {
+	StatusResponse
+	ItemID  int64  `json:"itemid"`
+	Stack   string `json:"stack,omitempty"`
+	StackID int64  `json:"stackid,omitempty"`
+}
+
 // Submit submits files to Sta.sh or modify existing files.
 //
 // It can receive files in any format. Some formats like JPG, PNG, GIF, HTML or
@@ -52,21 +59,13 @@ type StashSubmitParams struct {
 //   - stash
 func (s *stashService) Submit(params *StashSubmitParams) error {
 	var (
-		success map[string]any
-		failure map[string]any
+		success SubmitResponse
+		failure Error
 	)
 	// TODO: Upload file.
 	_, err := s.sling.New().Post("submit").BodyForm(params).Receive(&success, &failure)
-	fmt.Println("=== SUCCESS ===")
-	fmt.Println(success)
-	fmt.Println("")
-	fmt.Println("=== FAILURE ===")
-	fmt.Println(failure)
-	fmt.Println("")
-	fmt.Println("===  ERROR  ===")
-	fmt.Println(err)
-
-	req, _ := s.sling.New().Post("submit").BodyForm(params).BodyForm(nil).Request()
-	fmt.Println(req.URL.String())
-	return err
+	if err := relevantError(err, failure); err != nil {
+		return fmt.Errorf("unable to submit file to sta.sh: %w", err)
+	}
+	return nil
 }
