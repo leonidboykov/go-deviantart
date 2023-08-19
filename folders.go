@@ -74,7 +74,7 @@ func (s *foldersService[T]) Folder(folderID uuid.UUID, params *FolderParams, pag
 	return success, nil
 }
 
-type UsernameParams struct {
+type usernameParams struct {
 	Username string `url:"username,omitempty"`
 }
 
@@ -86,11 +86,12 @@ type UsernameParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *foldersService[T]) All(params *UsernameParams) (OffsetResponse[Deviation], error) {
+func (s *foldersService[T]) All(username string) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
 	)
+	params := &usernameParams{Username: username}
 	_, err := s.sling.New().Get("all").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch all content: %w", err)
@@ -108,7 +109,7 @@ func (s *foldersService[T]) All(params *UsernameParams) (OffsetResponse[Deviatio
 //   - browse
 //
 // TODO: Support `ext_preload` for collections.
-func (s *foldersService[T]) Folders(params *UsernameParams, page *OffsetParams) (OffsetResponse[T], error) {
+func (s *foldersService[T]) Folders(params *FoldersParams, page *OffsetParams) (OffsetResponse[T], error) {
 	var (
 		success OffsetResponse[T]
 		failure Error
@@ -136,10 +137,9 @@ type CopyDeviationsParams struct {
 //   - collection or gallery
 func (s *foldersService[T]) CopyDeviations(params *CopyDeviationsParams) error {
 	var (
-		success map[string]any
 		failure Error
 	)
-	_, err := s.sling.New().Get("folders/copy_deviations").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("folders/copy_deviations").QueryStruct(params).Receive(nil, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return fmt.Errorf("unable to copy deviations: %w", err)
 	}
@@ -188,7 +188,7 @@ type MoveDeviationsParams struct {
 	TargetFolderID uuid.UUID `url:"target_folderid"`
 
 	// The UUIDs of the deviations.
-	DeviationIDS []uuid.UUID `url:"deviationids"`
+	DeviationIDs []uuid.UUID `url:"deviationids"`
 }
 
 // MoveDeviations moves a list of deviations to a folder destination.

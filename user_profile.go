@@ -76,10 +76,6 @@ func (s *userService) Profile(username string, params *GetProfileParams) (Profil
 	return success, nil
 }
 
-type usernameParams struct {
-	Username string `url:"username"`
-}
-
 // Posts returns all journals & status updates for a given user in a single feed.
 //
 // To connect to this endpoint OAuth2 Access Token from the Client Credentials

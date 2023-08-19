@@ -17,15 +17,15 @@ type Collection struct {
 }
 
 type collectionsService struct {
-	sling   *sling.Sling
-	Folders *foldersService[Collection]
+	sling *sling.Sling
+	*foldersService[Collection]
 }
 
 func newCollectionsService(sling *sling.Sling) *collectionsService {
 	base := sling.Path("collections/")
 	return &collectionsService{
-		sling:   base,
-		Folders: newFoldersService[Collection](base.New()),
+		sling:          base,
+		foldersService: newFoldersService[Collection](base.New()),
 	}
 }
 
