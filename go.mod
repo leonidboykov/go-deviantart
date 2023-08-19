@@ -1,4 +1,4 @@
-module github.com/leonidboykov/deviantart
+module github.com/leonidboykov/go-deviantart
 
 go 1.21
 

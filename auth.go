@@ -8,7 +8,7 @@ import (
 	"golang.org/x/oauth2/authhandler"
 	"golang.org/x/oauth2/clientcredentials"
 
-	"github.com/leonidboykov/deviantart/internal/authserver"
+	"github.com/leonidboykov/go-deviantart/internal/authserver"
 )
 
 // Authenticator describes authentication pipeline.
