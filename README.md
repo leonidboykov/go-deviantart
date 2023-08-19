@@ -1,4 +1,9 @@
-This is a subset of current DeviantArt API. Some features omitted:
+# go-deviantart
 
-- Marked as deprecated.
-- Something that has no point to implement.
+> 🚧 The project in currently in WIP status. Not all endpoints are testes,
+> unit-tests are missing.
+
+DeviantArt API for Go.
+
+The most of features are implemented, only deprecated and pointless endpoints
+are omitted.
