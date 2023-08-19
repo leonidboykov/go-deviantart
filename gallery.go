@@ -19,14 +19,14 @@ type Gallery struct {
 }
 
 type galleryService struct {
-	sling   *sling.Sling
-	Folders *foldersService[Gallery]
+	sling *sling.Sling
+	*foldersService[Gallery]
 }
 
 func newGalleryService(sling *sling.Sling) *galleryService {
 	base := sling.Path("gallery/")
 	return &galleryService{
-		sling:   base,
-		Folders: newFoldersService[Gallery](base.New()),
+		sling:          base,
+		foldersService: newFoldersService[Gallery](base.New()),
 	}
 }

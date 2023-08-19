@@ -28,5 +28,4 @@ func GetDeviationUUIDByURL(url string) (uuid.UUID, error) {
 	}
 
 	return uuid.ParseBytes(match[1])
-
 }
