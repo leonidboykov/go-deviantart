@@ -23,12 +23,19 @@ type Client struct {
 	User        *userService
 }
 
+type withMatureContentParams struct {
+	MatureContent bool `url:"mature_content"`
+}
+
 // TODO: Add http.Client to args.
 func NewClient(auth Authenticator) (*Client, error) {
 	sling := sling.New().Base(deviantArtURL)
 	if err := auth(sling); err != nil {
 		return nil, err
 	}
+
+	// TODO: Make it customizable.
+	sling.QueryStruct(&withMatureContentParams{true})
 
 	c := Client{
 		base:        sling,

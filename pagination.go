@@ -3,7 +3,7 @@ package deviantart
 // OffsetParams params for offset-based pagination.
 type OffsetParams struct {
 	// The pagination offset.
-	Offset uint32 `url:"limit,omitempty"`
+	Offset uint32 `url:"offset,omitempty"`
 
 	// The pagination limit.
 	Limit uint32 `url:"limit,omitempty"`
@@ -19,6 +19,13 @@ type OffsetResponse[T any] struct {
 	EstimatedTotal uint32 `json:"estimated_total,omitempty"`
 }
 
+func (o *OffsetResponse[T]) Next() *OffsetParams {
+	// TODO: Set a limit.
+	return &OffsetParams{
+		Offset: o.NextOffset,
+	}
+}
+
 // CursorParams params for cursor-based pagination.
 type CursorParams struct {
 	Cursor string `url:"cursor,omitempty"`
@@ -29,6 +36,12 @@ type CursorResponse[T any] struct {
 	HasMore    bool   `json:"has_more"`
 	NextCursor string `json:"next_cursor"`
 	PrevCursor string `json:"prev_cursor"`
+}
+
+func (c *CursorResponse[T]) Next() *CursorParams {
+	return &CursorParams{
+		Cursor: c.NextCursor,
+	}
 }
 
 // singleResponse represents response without pagination.

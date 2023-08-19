@@ -18,10 +18,6 @@ func newBrowseService(sling *sling.Sling) *browseService {
 	}
 }
 
-type DailyDeviationsParams struct {
-	Date time.Time `url:"date,omitempty" layout:"2006-01-02"`
-}
-
 // DailyDeviations fetches daily deviations.
 //
 // To connect to this endpoint OAuth2 Access Token from the Client Credentials
@@ -33,12 +29,15 @@ type DailyDeviationsParams struct {
 //
 // TODO: The endpoint returns the `has_more` field, but there is no offset or
 // cursor pagination information. This case requires further investigation.
-func (s *browseService) DailyDeviations(params *DailyDeviationsParams) (OffsetResponse[Deviation], error) {
+func (s *browseService) DailyDeviations(date time.Time) (OffsetResponse[Deviation], error) {
+	type dateParams struct {
+		Date time.Time `url:"date,omitempty" layout:"2006-01-02"`
+	}
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
 	)
-	_, err := s.sling.New().Get("dailydeviations").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("dailydeviations").QueryStruct(&dateParams{Date: date}).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch daily deviations: %w", err)
 	}
@@ -87,20 +86,21 @@ type MoreLikeThisPreviewResponse struct {
 //   - browse.mlt
 func (s *browseService) MoreLikeThisPreview(seed uuid.UUID) (MoreLikeThisPreviewResponse, error) {
 	type seedParams struct {
-		Seed uuid.UUID `url:"seed"`
+		Seed string `url:"seed"`
 	}
 	var (
 		success MoreLikeThisPreviewResponse
 		failure Error
 	)
-	_, err := s.sling.New().Get("morelikethis/preview").QueryStruct(&seedParams{Seed: seed}).Receive(&success, &failure)
+	params := &seedParams{Seed: seed.String()}
+	_, err := s.sling.New().Get("morelikethis/preview").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return MoreLikeThisPreviewResponse{}, fmt.Errorf("unable to fetch more like this: %w", err)
 	}
 	return success, nil
 }
 
-type SearchParams struct {
+type searchParams struct {
 	// Search query term.
 	//
 	// Estimated total results count would be available on EstimatedTotal field.
@@ -115,11 +115,12 @@ type SearchParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *browseService) Newest(params *SearchParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
+func (s *browseService) Newest(query string, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
 	)
+	params := &searchParams{Query: query}
 	_, err := s.sling.New().Get("newest").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch newest deviations: %w", err)
@@ -205,11 +206,12 @@ func (s *browseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetRespons
 //
 // TODO: Documentation specifies the `suggested_reasons` field but is absend in
 // all responses. This case requires further investigation.
-func (s *browseService) Recommended(params *SearchParams) (OffsetResponse[Deviation], error) {
+func (s *browseService) Recommended(query string) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
 	)
+	params := &searchParams{Query: query}
 	_, err := s.sling.New().Get("recommended").QueryStruct(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch recommended deviations: %w", err)
@@ -316,17 +318,11 @@ func (s *browseService) Topics(page *CursorParams) (CursorResponse[Topic], error
 		success CursorResponse[Topic]
 		failure Error
 	)
-	_, err := s.sling.New().Get("topics").QueryStruct(page).Receive(success, failure)
+	_, err := s.sling.New().Get("topics").QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return CursorResponse[Topic]{}, fmt.Errorf("unable to fetch topics: %w", err)
 	}
 	return success, nil
-}
-
-type TopTopic struct {
-	Name              string      `json:"name"`
-	CanonicalName     string      `json:"canonical_name"`
-	ExampleDeviations []Deviation `json:"example_deviations,omitempty"`
 }
 
 // Topics fetches top topics with example deviation for each one.
@@ -337,14 +333,14 @@ type TopTopic struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *browseService) TopTopics(page *CursorParams) (CursorResponse[TopTopic], error) {
+func (s *browseService) TopTopics(page *CursorParams) (CursorResponse[Topic], error) {
 	var (
-		success CursorResponse[TopTopic]
+		success CursorResponse[Topic]
 		failure Error
 	)
-	_, err := s.sling.New().Get("toptopics").QueryStruct(page).Receive(success, failure)
+	_, err := s.sling.New().Get("toptopics").QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return CursorResponse[TopTopic]{}, fmt.Errorf("unable to fetch topics: %w", err)
+		return CursorResponse[Topic]{}, fmt.Errorf("unable to fetch topics: %w", err)
 	}
 	return success, nil
 }
@@ -370,7 +366,7 @@ func (s *browseService) UserJournals(params *UserJournalsParams, page *OffsetPar
 		success OffsetResponse[Deviation]
 		failure Error
 	)
-	_, err := s.sling.New().Get("user/journals").QueryStruct(params).QueryStruct(page).Receive(success, failure)
+	_, err := s.sling.New().Get("user/journals").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to browse user journals: %w", err)
 	}

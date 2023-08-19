@@ -9,9 +9,10 @@ import (
 
 // TODO: Embed to Gallery and Collection?
 type Folder struct {
-	FolderID uuid.UUID `json:"folderid"`
-	Name     string    `json:"name"`
-	Owner    *User     `json:"owner,omitempty"` // TODO: Do we need this field?
+	// FolderID uuid.UUID `json:"folderid"` // TODO: Remove it?
+	FolderID int64  `json:"folderid"`
+	Name     string `json:"name"`
+	Owner    *User  `json:"owner,omitempty"` // TODO: Do we need this field?
 }
 
 type foldersService[T Collection | Gallery] struct {

@@ -232,7 +232,7 @@ func (s *deviationService) Edit(deviationID uuid.UUID, params *EditDeviationPara
 		success DeviationUpdateResponse
 		failure Error
 	)
-	_, err := s.sling.New().Get("edit/").Path(deviationID.String()).BodyForm(params).Receive(success, failure)
+	_, err := s.sling.New().Get("edit/").Path(deviationID.String()).BodyForm(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return DeviationUpdateResponse{}, fmt.Errorf("unable to edit deviation: %w", err)
 	}
