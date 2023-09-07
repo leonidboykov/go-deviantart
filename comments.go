@@ -62,7 +62,7 @@ type CommentSiblingsParams struct {
 	Offset int `url:"offset,omitempty"`
 
 	// The pagination limit.
-	Limit int `url:"offset,omitempty"`
+	Limit int `url:"limit,omitempty"`
 }
 
 type CommentSiblings struct {

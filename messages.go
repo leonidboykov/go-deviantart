@@ -78,8 +78,6 @@ type MessagesFeedParams struct {
 
 	// True to use stacked mode, false to use flat mode.
 	Stack bool `url:"stack,omitempty"`
-
-	Cursor string `url:"cursor,omitempty"`
 }
 
 // Feed fetches feed of all messages.
@@ -95,12 +93,12 @@ type MessagesFeedParams struct {
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *MessagesService) Feed(params *MessagesFeedParams) (CursorResponse[Message], error) {
+func (s *MessagesService) Feed(params *MessagesFeedParams, page *CursorParams) (CursorResponse[Message], error) {
 	var (
 		success CursorResponse[Message]
 		failure Error
 	)
-	_, err := s.sling.New().Get("feed").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("feed").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return CursorResponse[Message]{}, fmt.Errorf("unable to fetch message feed: %w", err)
 	}
@@ -112,16 +110,10 @@ type MessagesFeedbackParams struct {
 	Type string `url:"type"`
 
 	// The folder to fetch messages from, defaults to inbox.
-	FolderID uuid.UUID `jsurlon:"folderid,omitempty"`
+	FolderID uuid.UUID `url:"folderid,omitempty"`
 
 	// True to use stacked mode, false to use flat mode.
 	Stack bool `url:"stack,omitempty"`
-
-	// The pagination offset.
-	Offset int `url:"offset,omitempty"`
-
-	// The pagination limit.
-	Limit int `url:"limit,omitempty"`
 }
 
 // Feedback fetches feedback messages.
@@ -137,12 +129,12 @@ type MessagesFeedbackParams struct {
 // The following scopes are required to access this resource:
 //
 //   - message
-func (s *MessagesService) Feedback(params *MessagesFeedbackParams) (CursorResponse[Message], error) {
+func (s *MessagesService) Feedback(params *MessagesFeedbackParams, page *OffsetParams) (CursorResponse[Message], error) {
 	var (
 		success CursorResponse[Message]
 		failure Error
 	)
-	_, err := s.sling.New().Get("feedback").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("feedback").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return CursorResponse[Message]{}, fmt.Errorf("unable to fetch message feedback: %w", err)
 	}
