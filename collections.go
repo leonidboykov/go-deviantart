@@ -34,7 +34,7 @@ type faveParams struct {
 	DeviationID uuid.UUID `url:"deviationid"`
 
 	// Optional `UUID` of the Collection folder to add the favourite into.
-	FolderIDs []uuid.UUID `url:"folderid,optional"`
+	FolderIDs []uuid.UUID `url:"folderid,omitempty"`
 }
 
 // Fave adds deviation to favourites.
