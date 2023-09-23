@@ -14,7 +14,7 @@ type CreateJournalParams struct {
 	Body string `url:"body,omitempty"`
 
 	// Journal tags.
-	Tags []string `url:"tags,omitempty"`
+	Tags []string `url:"tags,brackets,omitempty"`
 
 	// Cover deviation ID.
 	CoverImageDeviationID uuid.UUID `url:"cover_image_deviation_id,omitempty"`
@@ -57,7 +57,7 @@ type UpdateJournalParams struct {
 	Title string `url:"title"`
 
 	// Journal tags.
-	Tags []string `url:"tags,omitempty"`
+	Tags []string `url:"tags,brackets,omitempty"`
 
 	// Cover deviation ID.
 	CoverImageDeviationID uuid.UUID `url:"cover_image_deviation_id,omitempty"`
