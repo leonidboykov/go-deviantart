@@ -1,6 +1,15 @@
 package deviantart
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"io/fs"
+	"mime/multipart"
+	"strings"
+
+	"github.com/google/go-querystring/query"
+)
 
 type StashSubmitParams struct {
 	// The title of the submission.
@@ -11,7 +20,7 @@ type StashSubmitParams struct {
 
 	// An array of tags describing the submission. Letters, numbers and
 	// underscore only.
-	Tags []string `url:"tags,omitempty"`
+	Tags []string `url:"tags,brackets,omitempty"`
 
 	// A link to the original, in case the artwork has already been posted
 	// elsewhere. This field can be restricted with a whitelist by editing your
@@ -57,15 +66,69 @@ type SubmitResponse struct {
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *StashService) Submit(params *StashSubmitParams) error {
+func (s *StashService) Submit(params *StashSubmitParams, files ...fs.File) (SubmitResponse, error) {
 	var (
 		success SubmitResponse
 		failure Error
 	)
-	// TODO: Upload file.
-	_, err := s.sling.New().Post("submit").BodyForm(params).Receive(&success, &failure)
-	if err := relevantError(err, failure); err != nil {
-		return fmt.Errorf("unable to submit file to sta.sh: %w", err)
+	provider, err := newMultipartBodyProvider(params, files...)
+	if err != nil {
+		return SubmitResponse{}, fmt.Errorf("prepare submit data: %w", err)
 	}
-	return nil
+	_, err = s.sling.New().Post("submit").BodyProvider(provider).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return SubmitResponse{}, fmt.Errorf("unable to submit file to sta.sh: %w", err)
+	}
+	return success, nil
+}
+
+type multipartBodyProvider struct {
+	reader      io.Reader
+	contentType string
+}
+
+func newMultipartBodyProvider(params *StashSubmitParams, files ...fs.File) (*multipartBodyProvider, error) {
+	values, err := query.Values(params)
+	if err != nil {
+		return nil, fmt.Errorf("encode params: %w", err)
+	}
+	if len(files) == 0 {
+		// Fallback to form body provider.
+		return &multipartBodyProvider{
+			reader:      strings.NewReader(values.Encode()),
+			contentType: "application/x-www-form-urlencoded",
+		}, nil
+	}
+	buf := new(bytes.Buffer)
+	mp := multipart.NewWriter(buf)
+	for _, file := range files {
+		fs, err := file.Stat()
+		if err != nil {
+			return nil, fmt.Errorf("get file stat: %w", err)
+		}
+		part, err := mp.CreateFormFile(fs.Name(), fs.Name()) // TODO: Is it correct?
+		if err != nil {
+			return nil, fmt.Errorf("create from file: %w", err)
+		}
+		io.Copy(part, file)
+	}
+	for key, vals := range values {
+		for _, val := range vals {
+			mp.WriteField(key, val)
+		}
+	}
+	return &multipartBodyProvider{
+		reader:      buf,
+		contentType: mp.FormDataContentType(),
+	}, nil
+}
+
+// ContentType returns the Content-Type of the body.
+func (p *multipartBodyProvider) ContentType() string {
+	return p.contentType
+}
+
+// Body returns the io.Reader body.
+func (p *multipartBodyProvider) Body() (io.Reader, error) {
+	return p.reader, nil
 }

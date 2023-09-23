@@ -17,7 +17,7 @@ type CreateLiteratureParams struct {
 	Description string `url:"description,omitempty"`
 
 	// Literature tags.
-	Tags []string `url:"tags,omitempty"`
+	Tags []string `url:"tags,brackets,omitempty"`
 
 	// UUIDs of gallery folders to publish this submission to.
 	GalleryIDs []uuid.UUID `url:"galleryids,omitempty"`
@@ -66,7 +66,7 @@ type UpdateLiteratureParams struct {
 	Title string `url:"title"`
 
 	// Literature tags.
-	Tags []string `url:"tags,omitempty"`
+	Tags []string `url:"tags,brackets,omitempty"`
 
 	// UUIDs of gallery folders to publish this submission to.
 	GalleryIDs []uuid.UUID `url:"galleryids,omitempty"`
