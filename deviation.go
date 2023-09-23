@@ -298,6 +298,11 @@ type DeviationTag struct {
 	Sponsor   bool   `json:"sponsor"`
 }
 
+// String returns DeviationTag name.
+func (t DeviationTag) String() string {
+	return t.Name
+}
+
 type DeviationSubmission struct {
 	CreationTime  string `json:"creation_time"`
 	Category      string `json:"category"`

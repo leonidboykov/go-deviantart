@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/dghubble/sling"
+	"github.com/dustin/go-humanize"
 )
 
 type fileInfo struct {
@@ -296,8 +297,13 @@ func (s *StashService) Userdata() (StashUserdata, error) {
 }
 
 type StashSpace struct {
-	AvailableSpace int `json:"available_space"`
-	TotalSpace     int `json:"total_space"`
+	AvailableSpace uint64 `json:"available_space"`
+	TotalSpace     uint64 `json:"total_space"`
+}
+
+// String represents available space in human readable form.
+func (s StashSpace) String() string {
+	return fmt.Sprintf("%s of %s", humanize.IBytes(s.AvailableSpace), humanize.IBytes(s.TotalSpace))
 }
 
 // Space returns how much sta.sh space (expressed in bytes) a user has available
