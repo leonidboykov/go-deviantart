@@ -9,7 +9,11 @@ import (
 	"golang.org/x/oauth2/clientcredentials"
 
 	"github.com/leonidboykov/go-deviantart/internal/authserver"
+	"github.com/leonidboykov/go-deviantart/internal/ratelimit"
 )
+
+// CallbackURL defines redirect URL for OAuth2.
+var CallbackURL = "http://localhost:8080/callback"
 
 // Authenticator describes authentication pipeline.
 type Authenticator func(s *sling.Sling) error
@@ -23,7 +27,7 @@ func ClientCredentials(clientID, clientSecret string) Authenticator {
 		TokenURL:     "https://www.deviantart.com/oauth2/token",
 	}
 	return func(s *sling.Sling) error {
-		s.Client(conf.Client(context.Background()))
+		s.Doer(ratelimit.NewHTTPClient(conf.Client(context.Background())))
 		return nil
 	}
 }
@@ -58,7 +62,7 @@ var AllScopes = []string{
 
 // AuthorizationCode grant is the most common OAuth2 grant type and gives access
 // to aspects of a users account. Use this method if you need to upload images.
-func AuthorizationCode(clientID, clientSecret string, scopes []string, callbackURL string) Authenticator {
+func AuthorizationCode(clientID, clientSecret string, scopes ...string) Authenticator {
 	conf := &oauth2.Config{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
@@ -66,7 +70,7 @@ func AuthorizationCode(clientID, clientSecret string, scopes []string, callbackU
 			AuthURL:  "https://www.deviantart.com/oauth2/authorize",
 			TokenURL: "https://www.deviantart.com/oauth2/token",
 		},
-		RedirectURL: callbackURL,
+		RedirectURL: CallbackURL,
 		Scopes:      scopes,
 	}
 	return func(s *sling.Sling) error {
@@ -74,13 +78,13 @@ func AuthorizationCode(clientID, clientSecret string, scopes []string, callbackU
 			context.Background(),
 			conf,
 			"state", // TODO: This is unsecure.
-			authserver.AuthHandler(callbackURL),
+			authserver.AuthHandler(CallbackURL),
 		).Token()
 		if err != nil {
 			return nil
 		}
 
-		s.Client(conf.Client(context.Background(), tok))
+		s.Doer(ratelimit.NewHTTPClient(conf.Client(context.Background(), tok)))
 		return nil
 	}
 }

@@ -10,9 +10,9 @@ import (
 type Collection struct {
 	FolderID    uuid.UUID   `json:"folderid"`
 	Name        string      `json:"name"`
-	Description string      `json:"folder"`
+	Description string      `json:"description"`
 	Size        uint32      `json:"size,omitempty"`
-	Thumb       *Deviation  `json:"thumb"`
+	Thumb       *Deviation  `json:"thumb,omitempty"`
 	Deviations  []Deviation `json:"deviations,omitempty"`
 }
 
