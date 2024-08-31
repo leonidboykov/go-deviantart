@@ -37,7 +37,7 @@ func NewClient(auth Authenticator) (*Client, error) {
 	// TODO: Make it customizable.
 	sling.QueryStruct(&withMatureContentParams{true})
 
-	c := Client{
+	c := &Client{
 		base:        sling,
 		Browse:      newBrowseService(sling.New()),
 		Collections: newCollectionsService(sling.New()),
@@ -48,5 +48,5 @@ func NewClient(auth Authenticator) (*Client, error) {
 		Stash:       newStashService(sling.New()),
 		User:        newUserService(sling.New()),
 	}
-	return &c, nil
+	return c, nil
 }

@@ -32,7 +32,7 @@ func newStashService(sling *sling.Sling) *StashService {
 type StashMetadata struct {
 	Title          string            `json:"title"`
 	Path           string            `json:"path,omitempty"`
-	Size           int               `json:"size,omitempty"`
+	Size           int64             `json:"size,omitempty"`
 	Description    string            `json:"description,omitempty"` // html
 	ParentID       int               `json:"parentid,omitempty"`
 	Thumb          *StashFile        `json:"thumb,omitempty"`

@@ -7,12 +7,15 @@ import (
 	"github.com/google/uuid"
 )
 
+// CurrentUser allows to use endpoints for current user.
+const CurrentUser = ""
+
 // TODO: Embed to Gallery and Collection?
 type Folder struct {
-	// FolderID uuid.UUID `json:"folderid"` // TODO: Remove it?
-	FolderID int64  `json:"folderid"`
-	Name     string `json:"name"`
-	Owner    *User  `json:"owner,omitempty"` // TODO: Do we need this field?
+	// FolderID int64  `json:"folderid"` // TODO: Remove it?
+	FolderID uuid.UUID `json:"folderid"`
+	Name     string    `json:"name"`
+	Owner    *User     `json:"owner,omitempty"` // TODO: Do we need this field?
 }
 
 type FoldersService[T Collection | Gallery] struct {
@@ -86,13 +89,13 @@ type usernameParams struct {
 // The following scopes are required to access this resource:
 //
 //   - browse
-func (s *FoldersService[T]) All(username string) (OffsetResponse[Deviation], error) {
+func (s *FoldersService[T]) All(username string, page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
 		failure Error
 	)
 	params := &usernameParams{Username: username}
-	_, err := s.sling.New().Get("all").QueryStruct(params).Receive(&success, &failure)
+	_, err := s.sling.New().Get("all").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch all content: %w", err)
 	}
@@ -286,7 +289,7 @@ func (s *FoldersService[T]) Update(params *UpdateFoldersParams) error {
 	var (
 		failure Error
 	)
-	_, err := s.sling.New().Get("update").QueryStruct(params).Receive(nil, &failure)
+	_, err := s.sling.New().Get("folders/update").QueryStruct(params).Receive(nil, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return fmt.Errorf("unable to update folders: %w", err)
 	}
@@ -317,7 +320,7 @@ func (s *FoldersService[T]) UpdateDeviationOrder(params *UpdateDeviationOrderPar
 	var (
 		failure Error
 	)
-	_, err := s.sling.New().Post("update_deviation_order").BodyForm(params).Receive(nil, &failure)
+	_, err := s.sling.New().Post("folders/update_deviation_order").BodyForm(params).Receive(nil, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return fmt.Errorf("unable to update deviations order: %w", err)
 	}
@@ -341,11 +344,16 @@ type UpdateOrderParams struct {
 //
 //   - browse
 //   - collection or gallery
-func (s *FoldersService[T]) UpdateOrder(params *UpdateOrderParams) error {
+func (s *FoldersService[T]) UpdateOrder(folderID uuid.UUID, position int) error {
+	type updateOrderParams struct {
+		FolderID string `url:"folderid"`
+		Position int    `url:"position"`
+	}
 	var (
 		failure Error
 	)
-	_, err := s.sling.New().Post("update_order").BodyForm(params).Receive(nil, &failure)
+	params := &updateOrderParams{FolderID: folderID.String(), Position: position}
+	_, err := s.sling.New().Post("folders/update_order").BodyForm(params).Receive(nil, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return fmt.Errorf("unable to update folders order: %w", err)
 	}

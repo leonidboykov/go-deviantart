@@ -23,54 +23,86 @@ type deviationIDParam struct {
 }
 
 type Deviation struct {
-	DeviationID  uuid.UUID `json:"deviationid"`
-	PrintID      uuid.UUID `json:"printid,omitempty"`
-	URL          string    `json:"url,omitempty"`
-	Title        string    `json:"title,omitempty"`
-	Category     string    `json:"category,omitempty"`
-	CategoryPath string    `json:"category_path,omitempty"`
-	IsFavourited bool      `json:"is_favourited,omitempty"`
-	IsDeleted    bool      `json:"is_deleted"`
-	IsPublished  bool      `json:"is_published,omitempty"`
-	IsBlocked    bool      `json:"is_blocked,omitempty"`
-	Author       User      `json:"author,omitempty"`
-	Stats        struct {
+	DeviationID uuid.UUID `json:"deviationid"`
+
+	// UUID of print, available if author chooses "Sell Prints" option during
+	// submission.
+	PrintID uuid.UUID `json:"printid,omitempty"`
+
+	URL          string `json:"url,omitempty"`
+	Title        string `json:"title,omitempty"`
+	Category     string `json:"category,omitempty"`
+	CategoryPath string `json:"category_path,omitempty"`
+
+	// Whether this deviation was favourited by authenticated user.
+	IsFavourited bool `json:"is_favourited,omitempty"`
+
+	// If this field is true, then the deviation has been either deleted or put
+	// into Storage. Deleted deviations will be purged by system after some
+	// time. Clients should not attempt to access contents or URL of the
+	// deviation.
+	IsDeleted bool `json:"is_deleted"`
+
+	IsPublished bool `json:"is_published,omitempty"`
+	IsBlocked   bool `json:"is_blocked,omitempty"`
+	Author      User `json:"author,omitempty"`
+	Stats       struct {
 		Comments   uint32 `json:"comments"`
 		Favourites uint32 `json:"favourites"`
 	} `json:"stats,omitempty"`
 	PublishedTime  string        `json:"published_time,omitempty"`
 	AllowsComments bool          `json:"allows_comments,omitempty"`
 	Tier           DeviationTier `json:"tier,omitempty"`
-	Preview        StashFile     `json:"preview,omitempty"`
-	Content        struct {
+
+	// Preview image.
+	Preview StashFile `json:"preview,omitempty"`
+
+	// Content image. May not be present for non-image deviations. The image is
+	// resized image according to [DisplayResolution] format.
+	Content struct {
 		StashFile
-		FileSize uint32 `json:"filesize"`
+		FileSize uint64 `json:"filesize"`
 	} `json:"content,omitempty"`
+
+	// Thumbnail images.
 	Thumbs []StashFile `json:"thumbs"`
+
+	// Video files.
 	Videos []struct {
 		Src      string `json:"src"`
 		Quality  string `json:"quality"`
-		FileSize uint32 `json:"filesize"`
+		FileSize uint64 `json:"filesize"`
 		Duration uint32 `json:"duration"`
 	} `json:"videos,omitempty"`
-	Flash          []fileInfo `json:"flash,omitempty"`
+
+	//Flash SWF file.
+	Flash []fileInfo `json:"flash,omitempty"`
+
+	// Applicable to daily deviations, contains details of the DD award.
 	DailyDeviation struct {
 		Body      string `json:"body"`
 		Time      string `json:"time"`
 		Giver     User   `json:"giver"`
 		Suggester User   `json:"suggester,omitempty"`
 	} `json:"daily_deviation,omitempty"`
+
 	PremiumFolderData *PremiumFolderData `json:"premium_folder_data,omitempty"`
 	TextContent       *EditorText        `json:"text_content,omitempty"`
 	IsPinned          bool               `json:"is_pinned,omitempty"`
 	CoverImage        *Deviation         `json:"cover_image,omitempty"`
 	TierAccess        string             `json:"tier_access,omitempty"`
 	PrimaryTier       *Deviation         `json:"primary_tier,omitempty"`
-	Excerpt           string             `json:"excerpt,omitempty"`
-	IsMature          bool               `json:"is_mature,omitempty"`
-	IsDownloadable    bool               `json:"is_downloadable,omitempty"`
-	DownloadFileSize  uint32             `json:"download_filesize,omitempty"`
-	MotionBook        struct {
+
+	// Applicable to journals and literatures, contains excerpt of content. Use
+	// `/deviation/content` endpoint to load full content.
+	Excerpt string `json:"excerpt,omitempty"`
+
+	// Does this deviation contain mature content.
+	IsMature bool `json:"is_mature,omitempty"`
+
+	IsDownloadable   bool   `json:"is_downloadable,omitempty"`
+	DownloadFileSize uint64 `json:"download_filesize,omitempty"`
+	MotionBook       struct {
 		EmbedURL string `json:"embed_url,omitempty"`
 	} `json:"motion_book,omitempty"`
 	SuggestedReasons []any `json:"suggested_reasons,omitempty"`
@@ -165,7 +197,7 @@ func (s *DeviationService) Content(deviationID uuid.UUID) (Content, error) {
 type DownloadResponse struct {
 	fileInfo
 	FileName string `json:"filename"`
-	FileSize uint32 `json:"filesize"`
+	FileSize uint64 `json:"filesize"`
 }
 
 // Download fetches the original file download (if allowed).
@@ -181,7 +213,7 @@ func (s *DeviationService) Download(deviationID uuid.UUID) (DownloadResponse, er
 		success DownloadResponse
 		failure Error
 	)
-	_, err := s.sling.New().Get(deviationID.String()).Receive(&success, &failure)
+	_, err := s.sling.New().Get("download/").Path(deviationID.String()).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return DownloadResponse{}, fmt.Errorf("unable to fetch download data: %w", err)
 	}
