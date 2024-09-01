@@ -6,7 +6,7 @@ import (
 	"github.com/dghubble/sling"
 	"github.com/google/uuid"
 
-	"github.com/leonidboykov/go-deviantart/internal/field"
+	"github.com/leonidboykov/go-deviantart/field"
 )
 
 type DeviationService struct {
