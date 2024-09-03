@@ -129,12 +129,12 @@ type DeviationTier struct {
 	Settings         struct {
 		AccessSettings string `json:"access_settings"` // TODO: enum[all,future_only,limited_past_and_future]
 	} `json:"settings,omitempty"`
-	Stats []struct { // TODO: Documentation mentions a single object.
+	Stats field.SingleOrSlice[struct {
 		Subscribers uint32 `json:"subscribers,omitempty"`
 		Deviations  uint32 `json:"deviations,omitempty"`
 		Posts       uint32 `json:"posts,omitempty"`
 		Total       uint32 `json:"total,omitempty"`
-	} `json:"stats"`
+	}] `json:"stats"`
 	Benefits []string `json:"benefits"`
 }
 
