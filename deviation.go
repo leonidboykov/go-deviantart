@@ -5,6 +5,8 @@ import (
 
 	"github.com/dghubble/sling"
 	"github.com/google/uuid"
+
+	"github.com/leonidboykov/go-deviantart/field"
 )
 
 type DeviationService struct {
@@ -50,9 +52,9 @@ type Deviation struct {
 		Comments   uint32 `json:"comments"`
 		Favourites uint32 `json:"favourites"`
 	} `json:"stats,omitempty"`
-	PublishedTime  string        `json:"published_time,omitempty"`
-	AllowsComments bool          `json:"allows_comments,omitempty"`
-	Tier           DeviationTier `json:"tier,omitempty"`
+	PublishedTime  field.Timestamp `json:"published_time,omitempty"`
+	AllowsComments bool            `json:"allows_comments,omitempty"`
+	Tier           DeviationTier   `json:"tier,omitempty"`
 
 	// Preview image.
 	Preview StashFile `json:"preview,omitempty"`
@@ -127,12 +129,12 @@ type DeviationTier struct {
 	Settings         struct {
 		AccessSettings string `json:"access_settings"` // TODO: enum[all,future_only,limited_past_and_future]
 	} `json:"settings,omitempty"`
-	Stats struct {
+	Stats field.SingleOrSlice[struct {
 		Subscribers uint32 `json:"subscribers,omitempty"`
 		Deviations  uint32 `json:"deviations,omitempty"`
 		Posts       uint32 `json:"posts,omitempty"`
 		Total       uint32 `json:"total,omitempty"`
-	} `json:"stats"`
+	}] `json:"stats"`
 	Benefits []string `json:"benefits"`
 }
 

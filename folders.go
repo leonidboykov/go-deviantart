@@ -12,10 +12,11 @@ const CurrentUser = ""
 
 // TODO: Embed to Gallery and Collection?
 type Folder struct {
-	// FolderID int64  `json:"folderid"` // TODO: Remove it?
-	FolderID uuid.UUID `json:"folderid"`
-	Name     string    `json:"name"`
-	Owner    *User     `json:"owner,omitempty"` // TODO: Do we need this field?
+	// FolderID is used in MoreLikeThisPreview.
+	FolderID int64 `json:"folderid"` // TODO: Remove it?
+	// FolderID uuid.UUID `json:"folderid"`
+	Name  string `json:"name"`
+	Owner *User  `json:"owner,omitempty"` // TODO: Do we need this field?
 }
 
 type FoldersService[T Collection | Gallery] struct {

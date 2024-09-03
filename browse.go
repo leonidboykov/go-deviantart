@@ -20,12 +20,8 @@ func newBrowseService(sling *sling.Sling) *BrowseService {
 
 // DailyDeviations fetches daily deviations.
 //
-// To connect to this endpoint OAuth2 Access Token from the Client Credentials
-// Grant, or Authorization Code Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
+// To connect to this endpoint OAuth2 Access Token from the [ClientCredentials],
+// or [AuthorizationCode] with a [BrowseScope] scope is required.
 //
 // TODO: The endpoint returns the `has_more` field, but there is no offset or
 // cursor pagination information. This case requires further investigation.
@@ -46,12 +42,8 @@ func (s *BrowseService) DailyDeviations(date time.Time) (OffsetResponse[Deviatio
 
 // DeviantsYouWatch fetches deviations of deviants you watch.
 //
-// To connect to this endpoint OAuth2 Access Token from the Authorization Code
-// Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
+// To connect to this endpoint OAuth2 Access Token from the [AuthorizationCode]
+// with a [BrowseScope] is required.
 func (s *BrowseService) DeviantsYouWatch(page *OffsetParams) (OffsetResponse[Deviation], error) {
 	var (
 		success OffsetResponse[Deviation]
@@ -60,6 +52,29 @@ func (s *BrowseService) DeviantsYouWatch(page *OffsetParams) (OffsetResponse[Dev
 	_, err := s.sling.New().Get("deviantsyouwatch").QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch deviants for you: %w", err)
+	}
+	return success, nil
+}
+
+// Home browses homepage.
+//
+// To connect to this endpoint OAuth2 Access Token from the [AuthorizationCode]
+// with a [BrowseScope] is required.
+func (s *BrowseService) Home(query string, page *OffsetParams) (OffsetResponse[Deviation], error) {
+	type searchParams struct {
+		// Search query term.
+		//
+		// Estimated total results count would be available on EstimatedTotal field.
+		Query string `url:"q,omitempty"`
+	}
+	var (
+		success OffsetResponse[Deviation]
+		failure Error
+	)
+	params := &searchParams{Query: query}
+	_, err := s.sling.New().Get("home").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
+	if err := relevantError(err, failure); err != nil {
+		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch home deviations: %w", err)
 	}
 	return success, nil
 }
@@ -100,133 +115,10 @@ func (s *BrowseService) MoreLikeThisPreview(seed uuid.UUID) (MoreLikeThisPreview
 	return success, nil
 }
 
-type searchParams struct {
-	// Search query term.
-	//
-	// Estimated total results count would be available on EstimatedTotal field.
-	Query string `url:"q,omitempty"`
-}
-
-// Newest fetches newest deviations.
-//
-// To connect to this endpoint OAuth2 Access Token from the Client Credentials
-// Grant, or Authorization Code Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
-func (s *BrowseService) Newest(query string, page *OffsetParams) (OffsetResponse[Deviation], error) {
-	var (
-		success OffsetResponse[Deviation]
-		failure Error
-	)
-	params := &searchParams{Query: query}
-	_, err := s.sling.New().Get("newest").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
-	if err := relevantError(err, failure); err != nil {
-		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch newest deviations: %w", err)
-	}
-	return success, nil
-}
-
-const (
-	TimeRangeNow   = "now"
-	TimeRangeWeek  = "1week"
-	TimeRangeMonth = "1month"
-	TimeRangeAll   = "alltime"
-)
-
-type PopularParams struct {
-	// Search query term.
-	//
-	// Estimated total results count would be available on EstimatedTotal field.
-	Query string `url:"q,omitempty"`
-
-	// The timerange.
-	//
-	// TODO: Valid values are: values(now, 1week, 1month, alltime).
-	TimeRange string `url:"timerange,omitempty"`
-}
-
-// Popular fetches popular deviations.
-//
-// To connect to this endpoint OAuth2 Access Token from the Client Credentials
-// Grant, or Authorization Code Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
-//
-// BUG: Query does not work properly.
-// See: https://github.com/wix-incubator/DeviantArt-API/issues/206.
-func (s *BrowseService) Popular(params *PopularParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
-	var (
-		success OffsetResponse[Deviation]
-		failure Error
-	)
-	_, err := s.sling.New().Get("popular").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
-	if err := relevantError(err, failure); err != nil {
-		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch popular deviations: %w", err)
-	}
-	return success, nil
-}
-
-type JournalStatus struct {
-	Journal *Deviation `json:"journal"`
-	Status  *Status    `json:"status"`
-}
-
-// PostsDeviantsYouWatch returns deviants you watch.
-//
-// To connect to this endpoint OAuth2 Access Token from the Authorization Code
-// Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
-func (s *BrowseService) PostsDeviantsYouWatch(page *OffsetParams) (OffsetResponse[JournalStatus], error) {
-	var (
-		success OffsetResponse[JournalStatus]
-		failure Error
-	)
-	_, err := s.sling.New().Get("posts/deviantsyouwatch").QueryStruct(page).Receive(&success, &failure)
-	if err := relevantError(err, failure); err != nil {
-		return OffsetResponse[JournalStatus]{}, fmt.Errorf("unable to fetch deviants for you: %w", err)
-	}
-	return success, nil
-}
-
-// Recommended fetches recommended deviations.
-//
-// To connect to this endpoint OAuth2 Access Token from the Authorization Code
-// Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
-//
-// TODO: Documentation specifies the `suggested_reasons` field but is absend in
-// all responses. This case requires further investigation.
-func (s *BrowseService) Recommended(query string) (OffsetResponse[Deviation], error) {
-	var (
-		success OffsetResponse[Deviation]
-		failure Error
-	)
-	params := &searchParams{Query: query}
-	_, err := s.sling.New().Get("recommended").QueryStruct(params).Receive(&success, &failure)
-	if err := relevantError(err, failure); err != nil {
-		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to fetch recommended deviations: %w", err)
-	}
-	return success, nil
-}
-
 // Tags fetches a tag.
 //
-// To connect to this endpoint OAuth2 Access Token from the Client Credentials
-// Grant, or Authorization Code Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
+// To connect to this endpoint OAuth2 Access Token from the [ClientCredentials],
+// or [AuthorizationCode] with a [BrowseScope] scope is required.
 //
 // NOTE: This endpoint supports cursor- and offset-base pagination.
 // But for simplicity, I'll stick to cursor params for now.
@@ -247,15 +139,11 @@ func (s *BrowseService) Tags(tag string, page *CursorParams) (CursorResponse[Dev
 
 // TagsSearch autocompletes tags.
 //
-// The `tag_name“ parameter should not contain spaces. If it does, spaces will
-// be stripped and remainder will be treated as a single tag.
+// The `tag` parameter should not contain spaces. If it does, spaces will be
+// stripped and remainder will be treated as a single tag.
 //
-// To connect to this endpoint OAuth2 Access Token from the Client Credentials
-// Grant, or Authorization Code Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
+// To connect to this endpoint OAuth2 Access Token from the [ClientCredentials],
+// or [AuthorizationCode] with a [BrowseScope] scope is required.
 func (s *BrowseService) TagsSearch(tag string) ([]string, error) {
 	type tagName struct {
 		Name string `json:"tag_name" url:"tag_name"`
@@ -278,12 +166,8 @@ func (s *BrowseService) TagsSearch(tag string) ([]string, error) {
 
 // Topic fetches topic deviations.
 //
-// To connect to this endpoint OAuth2 Access Token from the Client Credentials
-// Grant, or Authorization Code Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
+// To connect to this endpoint OAuth2 Access Token from the [ClientCredentials],
+// or [AuthorizationCode] with a [BrowseScope] scope is required.
 func (s *BrowseService) Topic(topic string, page *CursorParams) (CursorResponse[Deviation], error) {
 	type topicParams struct {
 		Topic string `url:"topic"`
@@ -307,12 +191,8 @@ type Topic struct {
 
 // Topics fetches topics and deviations from each topic.
 //
-// To connect to this endpoint OAuth2 Access Token from the Client Credentials
-// Grant, or Authorization Code Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
+// To connect to this endpoint OAuth2 Access Token from the [ClientCredentials],
+// or [AuthorizationCode] with a [BrowseScope] scope is required.
 func (s *BrowseService) Topics(page *CursorParams) (CursorResponse[Topic], error) {
 	var (
 		success CursorResponse[Topic]
@@ -327,12 +207,8 @@ func (s *BrowseService) Topics(page *CursorParams) (CursorResponse[Topic], error
 
 // Topics fetches top topics with example deviation for each one.
 //
-// To connect to this endpoint OAuth2 Access Token from the Client Credentials
-// Grant, or Authorization Code Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
+// To connect to this endpoint OAuth2 Access Token from the [ClientCredentials],
+// or [AuthorizationCode] with a [BrowseScope] scope is required.
 func (s *BrowseService) TopTopics(page *CursorParams) (CursorResponse[Topic], error) {
 	var (
 		success CursorResponse[Topic]
@@ -341,34 +217,6 @@ func (s *BrowseService) TopTopics(page *CursorParams) (CursorResponse[Topic], er
 	_, err := s.sling.New().Get("toptopics").QueryStruct(page).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
 		return CursorResponse[Topic]{}, fmt.Errorf("unable to fetch topics: %w", err)
-	}
-	return success, nil
-}
-
-type UserJournalsParams struct {
-	// The username of the user to fetch journals for.
-	Username string `url:"username"`
-
-	// Fetch only featured or not.
-	Featured bool `url:"featured,omitempty"`
-}
-
-// UserJournals browses journals of a user.
-//
-// To connect to this endpoint OAuth2 Access Token from the Client Credentials
-// Grant, or Authorization Code Grant is required.
-//
-// The following scopes are required to access this resource:
-//
-//   - browse
-func (s *BrowseService) UserJournals(params *UserJournalsParams, page *OffsetParams) (OffsetResponse[Deviation], error) {
-	var (
-		success OffsetResponse[Deviation]
-		failure Error
-	)
-	_, err := s.sling.New().Get("user/journals").QueryStruct(params).QueryStruct(page).Receive(&success, &failure)
-	if err := relevantError(err, failure); err != nil {
-		return OffsetResponse[Deviation]{}, fmt.Errorf("unable to browse user journals: %w", err)
 	}
 	return success, nil
 }
