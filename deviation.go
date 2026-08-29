@@ -2,9 +2,9 @@ package deviantart
 
 import (
 	"fmt"
+	"uuid"
 
 	"github.com/dghubble/sling"
-	"github.com/google/uuid"
 
 	"github.com/leonidboykov/go-deviantart/field"
 )
@@ -129,6 +129,10 @@ type DeviationTier struct {
 	Settings         struct {
 		AccessSettings string `json:"access_settings"` // TODO: enum[all,future_only,limited_past_and_future]
 	} `json:"settings,omitempty"`
+	// Stats field described in the documentation as a single object field,
+	// while there are rare cases when empty array is returned. The
+	// [field.SingleOrSlice] type is a hack to handle this cases. Perhaps, you
+	// want to check only Stats[0] value.
 	Stats field.SingleOrSlice[struct {
 		Subscribers uint32 `json:"subscribers,omitempty"`
 		Deviations  uint32 `json:"deviations,omitempty"`

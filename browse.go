@@ -3,9 +3,9 @@ package deviantart
 import (
 	"fmt"
 	"time"
+	"uuid"
 
 	"github.com/dghubble/sling"
-	"github.com/google/uuid"
 )
 
 type BrowseService struct {

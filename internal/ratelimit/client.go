@@ -27,7 +27,7 @@ func NewHTTPClient(client Doer) *HTTPClient {
 
 func (c *HTTPClient) Do(req *http.Request) (*http.Response, error) {
 	backoffTimeout := defaultBackoffTimeout
-	for i := 0; i < defaultMaxRetries; i++ {
+	for range defaultMaxRetries {
 		resp, err := c.client.Do(req)
 		if err != nil {
 			return resp, err

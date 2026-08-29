@@ -1,6 +1,6 @@
 package field
 
-import "encoding/json"
+import "encoding/json/v2"
 
 type SingleOrSlice[T any] []T
 

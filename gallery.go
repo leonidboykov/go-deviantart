@@ -1,8 +1,9 @@
 package deviantart
 
 import (
+	"uuid"
+
 	"github.com/dghubble/sling"
-	"github.com/google/uuid"
 )
 
 type Gallery struct {

@@ -2,8 +2,7 @@ package deviantart
 
 import (
 	"fmt"
-
-	"github.com/google/uuid"
+	"uuid"
 )
 
 type CreateLiteratureParams struct {
