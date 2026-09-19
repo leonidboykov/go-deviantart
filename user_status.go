@@ -2,8 +2,7 @@ package deviantart
 
 import (
 	"fmt"
-
-	"github.com/google/uuid"
+	"uuid"
 )
 
 type Status struct {
@@ -107,7 +106,7 @@ func (s *UserService) PostStatus(params *PostStatusParams) (uuid.UUID, error) {
 	)
 	_, err := s.sling.New().Post("statuses/post").BodyForm(params).Receive(&success, &failure)
 	if err := relevantError(err, failure); err != nil {
-		return uuid.Nil, fmt.Errorf("unable to post status: %w", err)
+		return uuid.Nil(), fmt.Errorf("unable to post status: %w", err)
 	}
 	return success.StatusID, nil
 }

@@ -1,14 +1,10 @@
 package deviantart
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"io/fs"
-	"mime/multipart"
-	"strings"
 
-	"github.com/google/go-querystring/query"
+	"github.com/leonidboykov/go-deviantart/internal/slingutils"
 )
 
 type StashSubmitParams struct {
@@ -66,12 +62,12 @@ type SubmitResponse struct {
 // The following scopes are required to access this resource:
 //
 //   - stash
-func (s *StashService) Submit(params *StashSubmitParams, files ...fs.File) (SubmitResponse, error) {
+func (s *StashService) Submit(params *StashSubmitParams, file fs.File) (SubmitResponse, error) {
 	var (
 		success SubmitResponse
 		failure Error
 	)
-	provider, err := newMultipartBodyProvider(params, files...)
+	provider, err := slingutils.NewMultipartProvider(params, file)
 	if err != nil {
 		return SubmitResponse{}, fmt.Errorf("prepare submit data: %w", err)
 	}
@@ -80,55 +76,4 @@ func (s *StashService) Submit(params *StashSubmitParams, files ...fs.File) (Subm
 		return SubmitResponse{}, fmt.Errorf("unable to submit file to sta.sh: %w", err)
 	}
 	return success, nil
-}
-
-type multipartBodyProvider struct {
-	reader      io.Reader
-	contentType string
-}
-
-func newMultipartBodyProvider(params *StashSubmitParams, files ...fs.File) (*multipartBodyProvider, error) {
-	values, err := query.Values(params)
-	if err != nil {
-		return nil, fmt.Errorf("encode params: %w", err)
-	}
-	if len(files) == 0 {
-		// Fallback to form body provider.
-		return &multipartBodyProvider{
-			reader:      strings.NewReader(values.Encode()),
-			contentType: "application/x-www-form-urlencoded",
-		}, nil
-	}
-	buf := new(bytes.Buffer)
-	mp := multipart.NewWriter(buf)
-	for _, file := range files {
-		fs, err := file.Stat()
-		if err != nil {
-			return nil, fmt.Errorf("get file stat: %w", err)
-		}
-		part, err := mp.CreateFormFile(fs.Name(), fs.Name()) // TODO: Is it correct?
-		if err != nil {
-			return nil, fmt.Errorf("create from file: %w", err)
-		}
-		io.Copy(part, file)
-	}
-	for key, vals := range values {
-		for _, val := range vals {
-			mp.WriteField(key, val)
-		}
-	}
-	return &multipartBodyProvider{
-		reader:      buf,
-		contentType: mp.FormDataContentType(),
-	}, nil
-}
-
-// ContentType returns the Content-Type of the body.
-func (p *multipartBodyProvider) ContentType() string {
-	return p.contentType
-}
-
-// Body returns the io.Reader body.
-func (p *multipartBodyProvider) Body() (io.Reader, error) {
-	return p.reader, nil
 }

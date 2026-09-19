@@ -5,8 +5,7 @@ import (
 	"io"
 	"net/http"
 	"regexp"
-
-	"github.com/google/uuid"
+	"uuid"
 )
 
 var re = regexp.MustCompile(`content="DeviantArt:\/\/deviation\/(?P<uuid>[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})`)
@@ -27,5 +26,5 @@ func GetDeviationUUIDByURL(url string) (uuid.UUID, error) {
 		return uuid.UUID{}, errors.New("parsing issues, len(match) != 2")
 	}
 
-	return uuid.ParseBytes(match[1])
+	return uuid.Parse(string(match[1]))
 }

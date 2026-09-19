@@ -2,8 +2,7 @@ package deviantart
 
 import (
 	"fmt"
-
-	"github.com/google/uuid"
+	"uuid"
 )
 
 // The mature level of the submission.
@@ -86,6 +85,9 @@ type StashPublishParams struct {
 
 	// Add watermark. Available only if display_resolution is present.
 	AddWatermark bool `url:"add_watermark,omitempty"`
+
+	// Submission is AI generated or not.
+	IsAIGenerated bool `url:"is_ai_generated,omitempty"`
 }
 
 type StashPublishResponse struct {

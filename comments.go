@@ -2,9 +2,9 @@ package deviantart
 
 import (
 	"fmt"
+	"uuid"
 
 	"github.com/dghubble/sling"
-	"github.com/google/uuid"
 )
 
 type CommentsService struct {

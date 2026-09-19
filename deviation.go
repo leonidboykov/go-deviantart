@@ -2,9 +2,11 @@ package deviantart
 
 import (
 	"fmt"
+	"uuid"
 
 	"github.com/dghubble/sling"
-	"github.com/google/uuid"
+
+	"github.com/leonidboykov/go-deviantart/field"
 )
 
 type DeviationService struct {
@@ -50,9 +52,9 @@ type Deviation struct {
 		Comments   uint32 `json:"comments"`
 		Favourites uint32 `json:"favourites"`
 	} `json:"stats,omitempty"`
-	PublishedTime  string        `json:"published_time,omitempty"`
-	AllowsComments bool          `json:"allows_comments,omitempty"`
-	Tier           DeviationTier `json:"tier,omitempty"`
+	PublishedTime  field.Timestamp `json:"published_time,omitempty"`
+	AllowsComments bool            `json:"allows_comments,omitempty"`
+	Tier           DeviationTier   `json:"tier,omitempty"`
 
 	// Preview image.
 	Preview StashFile `json:"preview,omitempty"`
@@ -127,12 +129,16 @@ type DeviationTier struct {
 	Settings         struct {
 		AccessSettings string `json:"access_settings"` // TODO: enum[all,future_only,limited_past_and_future]
 	} `json:"settings,omitempty"`
-	Stats struct {
+	// Stats field described in the documentation as a single object field,
+	// while there are rare cases when empty array is returned. The
+	// [field.SingleOrSlice] type is a hack to handle this cases. Perhaps, you
+	// want to check only Stats[0] value.
+	Stats field.SingleOrSlice[struct {
 		Subscribers uint32 `json:"subscribers,omitempty"`
 		Deviations  uint32 `json:"deviations,omitempty"`
 		Posts       uint32 `json:"posts,omitempty"`
 		Total       uint32 `json:"total,omitempty"`
-	} `json:"stats"`
+	}] `json:"stats"`
 	Benefits []string `json:"benefits"`
 }
 
